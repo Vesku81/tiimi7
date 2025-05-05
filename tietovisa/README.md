@@ -32,16 +32,61 @@ TriviaVisa on monivalintatriviapeli, jossa pelaaja vastaa satunnaisesti haettuih
 
 1. Kloonaa repo
    ```bash
-   git clone https://github.com/KÄYTTÄJÄ/TuoreRepo.git
-   cd TuoreRepo
+   git clone https://github.com/Vesku81/tiimi7.git
+   cd tiimi7
 
 2. Asenna Flutterin riippuvuudet
    flutter pub get
 
-## Sovelluksen käynnistäminen
+## ▶️ Sovelluksen käynnistäminen
 
 1. Liitä Android-laite tai käynnistä emulaattori.
 
 2. Rakenna ja suorita: flutter run
 
 3. Sovellus käynnistyy laitteella/emulaattorissa.
+
+## 📁 Kansiorakenne
+
+├── lib/
+│   ├── main.dart             # Sovelluksen entrypoint
+│   ├── mallikansiot/
+│   │   └── kysymys.dart      # Kysymys-malliluokka
+│   ├── palvelut/
+│   │   └── trivia_api_palvelu.dart
+│   ├── tarjoajat/
+│   │   ├── trivia_tarjoaja.dart
+│   │   └── asetukset_tarjoaja.dart
+│   ├── utils/
+│   │   └── vakiot.dart
+│   └── nakymat/
+│       ├── aloitus_nakyma.dart
+│       ├── asetukset_nakyma.dart
+│       ├── peli_nakyma.dart
+│       └── tulokset_nakyma.dart
+├── assets/
+│   ├── images/
+│   └── sounds/
+├── pubspec.yaml
+└── README.md
+
+## ⚙️ Ominaisuudet
+- Monivalintakysymykset: satunnainen kysymyspaketti OpenTDB-API:sta
+- Aikaraja: 10 sekuntia per kysymys
+- Pisteytys: +20 / −5
+- Ääniasetukset: voit ottaa äänet käyttöön/pois ja säätää äänenvoimakkuutta
+- Tulosten tallennus: parhaat pisteet pysyvät muistissa SharedPreferencesissa
+- Responsiivinen UI: skaalaa eri laitteille ja näyttösuhteille
+
+## 🔄 Kehitys ja testaus
+- Uusi versio Flutterista: flutter upgrade
+- Yksikkötestit (jos lisäät testejä): flutter test
+
+## 🤝 Contributing
+- Forkkaa reposi
+- Luo feature-haara (git checkout -b feature/UusiOminaisuus)
+- Tee commit (git commit -am 'Lisää uusi ominaisuus')
+- Pushaa haara (git push origin feature/UusiOminaisuus)
+- Avaa Pull Request
+
+## 
