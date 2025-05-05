@@ -36,6 +36,7 @@ TriviaVisa on monivalintatriviapeli, jossa pelaaja vastaa satunnaisesti haettuih
    cd tiimi7
 
 2. Asenna Flutterin riippuvuudet
+   flutter pub add provider
    flutter pub get
 
 ## ▶️ Sovelluksen käynnistäminen
