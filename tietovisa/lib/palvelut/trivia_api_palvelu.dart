@@ -3,7 +3,8 @@ import 'dart:convert'; // JSON-datan käsittelyyn
 import 'package:http/http.dart' as http; // HTTP-pyyntöjen tekemiseen
 import 'package:html_unescape/html_unescape.dart'; // HTML-entiteettien purkamiseen
 import '../mallit/kysymys.dart'; // Kysymys-malliluokan tuonti
-import '../utils/vakiot.dart'; // API-perus URL:n tuonti
+//import '../utils/vakiot.dart'; // API-perus URL:n tuonti
+import 'package:tietovisa/utils/vakiot.dart';
 
 class TriviaApiPalvelu {
   // Funktio, joka hakee kysymyksiä Trivia API:sta parametrien perusteella, esim. "määrä", "vaikeustaso" (helppo/easy, keskitaso/medium tai vaikea/hard).
