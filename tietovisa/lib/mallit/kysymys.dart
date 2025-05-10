@@ -28,6 +28,7 @@ class Kysymys {
     required this.vaaratVastaukset,
   });
 
+  
   // Funktio, joka luo `Kysymys`-olion JSON-muotoisesta datasta, jota käytetään, kun haetaan kysymyksiä esimerkiksi API rajapinnan kautta
   factory Kysymys.malliJsonista(Map<String, dynamic> json) {
     return Kysymys(
