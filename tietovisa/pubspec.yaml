@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   provider: ^6.1.5
   shared_preferences: ^2.2.0
-  # http: ^0.13.5
+  http: ^0.13.5
   audioplayers: ^5.2.1 # Lisätty äänen toistoa varten
   html_unescape: ^2.0.0
 
