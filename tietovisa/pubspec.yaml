@@ -34,7 +34,7 @@ dependencies:
   shared_preferences: ^2.2.0
   # http: ^0.13.5
   audioplayers: ^5.2.1 # Lisätty äänen toistoa varten
-  # html_unescape: ^2.0.0
+  html_unescape: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
