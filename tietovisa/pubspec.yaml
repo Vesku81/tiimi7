@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.5
+  dart_openai: 3.0.0
   shared_preferences: ^2.2.0
   http: ^0.13.5
   audioplayers: ^5.2.1 # Lisätty äänen toistoa varten

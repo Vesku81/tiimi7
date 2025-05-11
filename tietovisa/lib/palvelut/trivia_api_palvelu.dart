@@ -1,61 +1,105 @@
-// TriviaApiPalvelu luokka vastaa Trivia API:n kysymysten hakemisesta ja datan käsittelystä
-import 'dart:convert'; // JSON-datan käsittelyyn
-import 'package:http/http.dart' as http; // HTTP-pyyntöjen tekemiseen
-import 'package:html_unescape/html_unescape.dart'; // HTML-entiteettien purkamiseen
-import '../mallit/kysymys.dart'; // Kysymys-malliluokan tuonti
-//import '../utils/vakiot.dart'; // API-perus URL:n tuonti
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:html_unescape/html_unescape.dart';
+import '../mallit/kysymys.dart';
 import 'package:tietovisa/utils/vakiot.dart';
+import 'package:dart_openai/dart_openai.dart'; // Tuodaan OpenAI-paketti
 
 class TriviaApiPalvelu {
-  // Funktio, joka hakee kysymyksiä Trivia API:sta parametrien perusteella, esim. "määrä", "vaikeustaso" (helppo/easy, keskitaso/medium tai vaikea/hard).
-  Future<List<Kysymys>> haeKysymykset(int maara, String vaikeus) async {
+  // API-avaimesi OpenAI:hin. TÄRKEÄÄ: Älä tallenna tätä suoraan koodiin tuotantoympäristössä!
+  // Käytä ympäristömuuttujia tai muuta turvallista tapaa.
+  final String _openAiApiKey = "Koodi"; // <-- VAIHDA TÄHÄN OMA API-AVAIMESI
+
+  // Funktio, joka hakee kysymyksiä Trivia API:sta ja kääntää ne tarvittaessa
+  Future<List<Kysymys>> haeKysymykset(int maara, String vaikeus, String kohdeKieli) async {
     try {
-      // Rakennetaan URL API-pyyntöä varten
       final url = Uri.parse(
           '$apiBaseUrl/api.php?amount=$maara&difficulty=$vaikeus&type=multiple');
-      final vastaus = await http.get(url); // Suoritetaan HTTP GET -pyyntö
+      final vastaus = await http.get(url);
 
-      // Tarkistetaan, että HTTP-vastaus onnistui
       if (vastaus.statusCode == 200) {
-        // Parsitaan JSON-data vastauksesta
         final Map<String, dynamic> data = json.decode(vastaus.body);
 
-        // Tarkistetaan, että response_code on 0, joka tarkoittaa, että API palautti datan onnistuneesti)
         if (data['response_code'] == 0) {
-          final unescape = HtmlUnescape(); // Luodaan instanssi HTML-entiteettien purkamiseen
+          final unescape = HtmlUnescape();
 
-          // Käydään API rajapinnan palauttama data läpi ja muunnetaan se Kysymys-olioiksi
-          List<Kysymys> kysymykset = (data['results'] as List)
-              .map((json) => Kysymys(
-            kategoria: unescape.convert(
-                json['category']), // Purkaa mahdolliset HTML-entiteetit kategoriasta
-            tyyppi: json['type'], // Kysymyksen tyyppi (esim. monivalinta/multiple choice)
-            vaikeus: json['difficulty'], // Vaikeustaso
-            kysymysTeksti: unescape
-                .convert(json['question']), // Purkaa kysymyksen tekstin.
-            oikeaVastaus: unescape.convert(
-                json['correct_answer']), // Purkaa oikean vastauksen
-            vaaratVastaukset: (json['incorrect_answers'] as List)
-                .map((vastaus) => unescape.convert(
-                vastaus)) // Purkaa kaikki väärät vastaukset
-                .toList(),
-          ))
-              .toList();
+          // Alustetaan OpenAI vain kerran, jos tarvitaan käännöstä
+          if (kohdeKieli != 'en') {
+            OpenAI.apiKey = _openAiApiKey;
+          }
 
-          return kysymykset; // Palautetaan lista kysymyksistä
+          List<Kysymys> kysymykset = [];
+          for (var item in data['results']) {
+            // Purkaa HTML-entiteetit ensin
+            final alkuperainenKategoria = unescape.convert(item['category']);
+            final alkuperainenKysymysTeksti = unescape.convert(item['question']);
+            final alkuperainenOikeaVastaus = unescape.convert(item['correct_answer']);
+            final alkuperaisetVaaratVastaukset = (item['incorrect_answers'] as List<dynamic>) // Varmistetaan tyyppi
+                .map((vastaus) => unescape.convert(vastaus.toString())) // Muunnetaan Stringiksi varmuuden vuoksi
+                .toList();
+
+            // Käännetään vain jos kohdekieli ei ole englanti
+            final kategoria = kohdeKieli != 'en' ? await kaannaTeksti(alkuperainenKategoria, kohdeKieli) : alkuperainenKategoria;
+            final kysymysTeksti = kohdeKieli != 'en' ? await kaannaTeksti(alkuperainenKysymysTeksti, kohdeKieli) : alkuperainenKysymysTeksti;
+            final oikeaVastaus = kohdeKieli != 'en' ? await kaannaTeksti(alkuperainenOikeaVastaus, kohdeKieli) : alkuperainenOikeaVastaus;
+            final vaaratVastaukset = kohdeKieli != 'en' ? await Future.wait(alkuperaisetVaaratVastaukset.map((v) => kaannaTeksti(v, kohdeKieli))) : alkuperaisetVaaratVastaukset;
+
+            kysymykset.add(Kysymys(
+              kategoria: kategoria,
+              tyyppi: item['type'],
+              vaikeus: item['difficulty'],
+              kysymysTeksti: kysymysTeksti,
+              oikeaVastaus: oikeaVastaus,
+              vaaratVastaukset: vaaratVastaukset.cast<String>(), // Varmistetaan tyyppi
+            ));
+          }
+
+          return kysymykset;
         } else {
           // API palautti virhekoodin (response_code ei ollut 0)
-          throw Exception('API palautti virhekoodin: ${data['response_code']}');
+          throw Exception('Trivia API palautti virhekoodin: ${data['response_code']}');
         }
       } else {
         // HTTP-pyyntö epäonnistui (statuskoodi ei ollut 200)
         throw Exception(
-            'HTTP-vastaus epäonnistui. Statuskoodi: ${vastaus.statusCode}');
+            'HTTP-vastaus Trivia API:sta epäonnistui. Statuskoodi: ${vastaus.statusCode}');
       }
     } catch (e) {
       // Käsitellään mahdolliset virheet ja tulostetaan debug-viesti konsoliin
-      print('Virhe Trivia API:ssa: $e');
-      throw Exception('Kysymysten haku epäonnistui.');
+      print('Virhe Trivia API:ssa tai käännöksessä: $e');
+      throw Exception('Kysymysten haku tai käännös epäonnistui.');
+    }
+  }
+
+  // Funktio tekstin kääntämiseen OpenAI:n avulla
+  Future<String> kaannaTeksti(String teksti, String kohdeKieli) async {
+    // Jos teksti on tyhjä tai kohdekieli on englanti, ei tarvitse kääntää
+    if (teksti.isEmpty || kohdeKieli == 'en') {
+      return teksti;
+    }
+
+    try {
+      final chatCompletion = await OpenAI.instance.chat.create(
+        model: "gpt-3.5-turbo", // Voit kokeilla myös muita malleja
+        messages: [
+          OpenAIChatCompletionChoiceMessageModel(
+            content: "Translate the following text to $kohdeKieli: $teksti",
+            role: OpenAIChatMessageRole.user,
+          ),
+        ],
+      );
+
+      // Tarkistetaan, että vastaus onnistui ja sisältää sisältöä
+      if (chatCompletion.choices.isNotEmpty && chatCompletion.choices.first.message.content != null) {
+        return chatCompletion.choices.first.message.content!;
+      } else {
+        print("OpenAI käännös palautti tyhjän vastauksen tekstille: $teksti");
+        return teksti; // Palautetaan alkuperäinen teksti, jos käännös epäonnistui
+      }
+
+    } catch (e) {
+      print("Virhe tekstin kääntämisessä OpenAI:lla: $e");
+      return teksti; // Palautetaan alkuperäinen teksti virheen sattuessa
     }
   }
 }

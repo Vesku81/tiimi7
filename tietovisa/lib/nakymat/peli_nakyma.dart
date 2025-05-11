@@ -39,8 +39,9 @@ class PeliNakymaTila extends State<PeliNakyma> {
       }
 
       // Haetaan kysymykset ja aloitetaan laskuri
+      // PÄIVITETTY KUTSU: Lisätään context parametrina
       Provider.of<TriviaTarjoaja>(context, listen: false)
-          .haeKysymykset(5, 'easy')
+          .haeKysymykset(5, 'easy', context) // <-- LISÄTTY context
           .then((_) {
         _paivitaVastaukset(); // Päivitetään vastausvaihtoehdot kysymykselle
         _aloitaAikalaskuri(); // Aloitetaan aikalaskuri
@@ -143,147 +144,147 @@ class PeliNakymaTila extends State<PeliNakyma> {
         backgroundColor: Colors.deepPurpleAccent,
       ),
       body: Stack(
-        children: [
-          // Taustakuva
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background.jpg'), // Sivun taustakuva
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Trivia-pelin sisältö
-          Consumer<TriviaTarjoaja>(
-            builder: (context, triviaTarjoaja, child) {
-              if (triviaTarjoaja.onLataus) {
-                return const Center(child: CircularProgressIndicator()); // Näytetään latausanimaatio
-              }
+          children: [
+      // Taustakuva
+      Container(
+      decoration: const BoxDecoration(
+      image: DecorationImage(
+          image: AssetImage('assets/images/background.jpg'), // Sivun taustakuva
+      fit: BoxFit.cover,
+    ),
+    ),
+    ),
+    // Trivia-pelin sisältö
+    Consumer<TriviaTarjoaja>(
+    builder: (context, triviaTarjoaja, child) {
+    if (triviaTarjoaja.onLataus) {
+    return const Center(child: CircularProgressIndicator()); // Näytetään latausanimaatio
+    }
 
-              if (triviaTarjoaja.virhe != null) {
-                return Center(
-                  child: Text(
-                    triviaTarjoaja.virhe!, // Näytetään mahdollinen virheviesti
-                    style: const TextStyle(fontSize: 18, color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }
+    if (triviaTarjoaja.virhe != null) {
+    return Center(
+    child: Text(
+    triviaTarjoaja.virhe!, // Näytetään mahdollinen virheviesti
+    style: const TextStyle(fontSize: 18, color: Colors.red),
+    textAlign: TextAlign.center,
+    ),
+    );
+    }
 
-              if (triviaTarjoaja.kysymykset.isEmpty) {
-                return const Center(child: Text("Kysymyksiä ei löytynyt."));
-              }
+    if (triviaTarjoaja.kysymykset.isEmpty) {
+    return const Center(child: Text("Kysymyksiä ei löytynyt."));
+    }
 
-              // Tarkistetaan, onko kaikkiin kysymyksiin vastattu ja peli päättynyt
-              if (triviaTarjoaja.nykyinenIndeksi >= triviaTarjoaja.kysymykset.length) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  siirryTuloksetNakymaan(triviaTarjoaja); // Siirrytään tulokset-sivulle
-                });
-                return const SizedBox();
-              }
+    // Tarkistetaan, onko kaikkiin kysymyksiin vastattu ja peli päättynyt
+    if (triviaTarjoaja.nykyinenIndeksi >= triviaTarjoaja.kysymykset.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        siirryTuloksetNakymaan(triviaTarjoaja); // Siirrytään tulokset-sivulle
+      });
+      return const SizedBox();
+    }
 
-              // Haetaan nykyinen kysymys
-              final kysymys = triviaTarjoaja.kysymykset[triviaTarjoaja.nykyinenIndeksi];
+    // Haetaan nykyinen kysymys
+    final kysymys = triviaTarjoaja.kysymykset[triviaTarjoaja.nykyinenIndeksi];
 
-              return Column(
-                children: [
-                  const SizedBox(height: 50),
-                  Text(
-                    'Tervetuloa, ${widget.kayttajaNimi}!',
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Kysymys ${triviaTarjoaja.nykyinenIndeksi + 1}/${triviaTarjoaja.kysymykset.length}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Aikaa jäljellä: $_aikaJaljella sekuntia',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.yellow),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            kysymys.kysymysTeksti,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                            textAlign: TextAlign.center,
+    return Column(
+      children: [
+        const SizedBox(height: 50),
+        Text(
+          'Tervetuloa, ${widget.kayttajaNimi}!',
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Kysymys ${triviaTarjoaja.nykyinenIndeksi + 1}/${triviaTarjoaja.kysymykset.length}',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Aikaa jäljellä: $_aikaJaljella sekuntia',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.yellow),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  kysymys.kysymysTeksti,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                // Näytetään sekoitetut vastausvaihtoehdot
+                ..._vastaukset.map((vastaus) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ElevatedButton(
+                      onPressed: kysymykseenVastattu
+                          ? null
+                          : () {
+                        bool oikein =
+                            vastaus == kysymys.oikeaVastaus;
+                        naytaPisteetSnackBar(context, oikein);
+                        triviaTarjoaja.vastaaKysymykseen(oikein);
+                        setState(() {
+                          kysymykseenVastattu = true; // Lukitaan vastaus
+                        });
+                        _timer?.cancel(); // Lopetetaan aikalaskuri
+                      },
+                      child: Text(vastaus),
+                    ),
+                  );
+                }),
+                // Seuraava kysymys -painike
+                ElevatedButton(
+                  onPressed: kysymykseenVastattu
+                      ? () {
+                    setState(() {
+                      kysymykseenVastattu = false; // Nollataan tila seuraavaa kysymystä varten
+                    });
+                    if (triviaTarjoaja.nykyinenIndeksi < triviaTarjoaja.kysymykset.length - 1) {
+                      triviaTarjoaja.seuraavaKysymys(); // Siirrytään seuraavaan kysymykseen
+                      _paivitaVastaukset(); // Sekoitetaan vastausvaihtoehdot uuden kysymyksen alussa
+                      _aloitaAikalaskuri(); // Aloitetaan uusi aikalaskuri
+                    } else {
+                      // Kaikkiin kysymyksiin on vastattu, siirrytään tulokset-sivulle
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TuloksetNakyma(
+                            kayttajaNimi: widget.kayttajaNimi,
+                            pisteet: triviaTarjoaja.pisteet,
                           ),
-                          const SizedBox(height: 20),
-                          // Näytetään sekoitetut vastausvaihtoehdot
-                          ..._vastaukset.map((vastaus) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ElevatedButton(
-                                onPressed: kysymykseenVastattu
-                                    ? null
-                                    : () {
-                                  bool oikein =
-                                      vastaus == kysymys.oikeaVastaus;
-                                  naytaPisteetSnackBar(context, oikein);
-                                  triviaTarjoaja.vastaaKysymykseen(oikein);
-                                  setState(() {
-                                    kysymykseenVastattu = true; // Lukitaan vastaus
-                                  });
-                                  _timer?.cancel(); // Lopetetaan aikalaskuri
-                                },
-                                child: Text(vastaus),
-                              ),
-                            );
-                          }),
-                          // Seuraava kysymys -painike
-                          ElevatedButton(
-                            onPressed: kysymykseenVastattu
-                                ? () {
-                              setState(() {
-                                kysymykseenVastattu = false; // Nollataan tila seuraavaa kysymystä varten
-                              });
-                              if (triviaTarjoaja.nykyinenIndeksi < triviaTarjoaja.kysymykset.length - 1) {
-                                triviaTarjoaja.seuraavaKysymys(); // Siirrytään seuraavaan kysymykseen
-                                _paivitaVastaukset(); // Sekoitetaan vastausvaihtoehdot uuden kysymyksen alussa
-                                _aloitaAikalaskuri(); // Aloitetaan uusi aikalaskuri
-                              } else {
-                                // Kaikkiin kysymyksiin on vastattu, siirrytään tulokset-sivulle
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TuloksetNakyma(
-                                      kayttajaNimi: widget.kayttajaNimi,
-                                      pisteet: triviaTarjoaja.pisteet,
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              textStyle: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            child: const Text('Seuraava kysymys'), // Painikkeen teksti
-                          ),
-                        ],
-                      ),
+                        ),
+                      );
+                    }
+                  }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              );
-            },
+                  child: const Text('Seuraava kysymys'), // Painikkeen teksti
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
+      ],
+    );
+    },
+    ),
+          ],
       ),
     );
   }
