@@ -6,9 +6,7 @@ import 'package:tietovisa/utils/vakiot.dart';
 import 'package:dart_openai/dart_openai.dart'; // Tuodaan OpenAI-paketti
 
 class TriviaApiPalvelu {
-  // API-avaimesi OpenAI:hin. TÄRKEÄÄ: Älä tallenna tätä suoraan koodiin tuotantoympäristössä!
-  // Käytä ympäristömuuttujia tai muuta turvallista tapaa.
-  final String _openAiApiKey = "Koodi"; // <-- VAIHDA TÄHÄN OMA API-AVAIMESI
+  final String _openAiApiKey = "API Avain"; // <-- VAIHDA TÄHÄN OMA API-AVAIMESI
 
   // Funktio, joka hakee kysymyksiä Trivia API:sta ja kääntää ne tarvittaessa
   Future<List<Kysymys>> haeKysymykset(int maara, String vaikeus, String kohdeKieli) async {
@@ -90,8 +88,8 @@ class TriviaApiPalvelu {
       );
 
       // Tarkistetaan, että vastaus onnistui ja sisältää sisältöä
-      if (chatCompletion.choices.isNotEmpty && chatCompletion.choices.first.message.content != null) {
-        return chatCompletion.choices.first.message.content!;
+      if (chatCompletion.choices.isNotEmpty) {
+        return chatCompletion.choices.first.message.content;
       } else {
         print("OpenAI käännös palautti tyhjän vastauksen tekstille: $teksti");
         return teksti; // Palautetaan alkuperäinen teksti, jos käännös epäonnistui

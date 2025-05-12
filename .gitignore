@@ -1,0 +1,133 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+*.hprof
+
+# IntelliJ related
+*.iml
+.idea/
+
+# VS Code (optional)
+# .vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio build artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Gradle files
+.gradle/
+
+# Build directories
+*/build/
+
+# Local configuration files
+local.properties
+
+# Keystore files
+*.jks
+*.keystore
+
+# OS-specific files
+Thumbs.db
+
+# Proguard configuration files
+proguard-rules.pro
+
+# Miscellaneous
+*.apk
+*.ap_
+*.dex
+*.aar
+*.jar
+*.svg
+
+# Android NDK
+ndkBuild/
+
+# Code coverage files
+*.gcov
+*.gcda
+*.gcno
+
+# Native libraries
+*.so
+*.o
+*.a
+*.dylib
+*.pdb
+*.dSYM
+
+# iOS related
+*.plist
+*.xcworkspace
+*.xcodeproj
+*.xcconfig
+*.xcassets
+*.xcscmblueprint
+*.xcscheme
+*.xccheckout
+*.xcdatamodeld
+*.xcdatamodel
+*.xib
+*.storyboard
+*.strings
+*.lproj
+*.pbxproj
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.mode1v3.lock
+*.mode2v3.lock
+*.mode1v3.local
+*.mode2v3.local
+*.mode1v3.local.lock
+*.mode2v3.local.lock
+*.mode1v3.local.plist
+*.mode2v3.local.plist
+*.mode1v3.local.plist.lock
+*.mode2v3.local.plist.lock
+*.mode1v3.local.plist.local
+*.mode2v3.local.plist.local
+*.mode1v3.local.plist.local.lock
+*.mode2v3.local.plist.local.lock
+*.mode1v3.local.plist.local.plist
+*.mode2v3.local.plist.local.plist
+*.mode1v3.local.plist.local.plist.lock
+*.mode2v3.local.plist.local.plist.lock
+*.mode1v3.local.plist.local.plist.local
+*.mode2v3.local.plist.local.plist.local
+*.mode1v3.local.plist.local.plist.local.lock
+*.mode2v3.local.plist.local.plist.local.lock
+*.mode1v3.local.plist.local.plist.local.plist
+*.mode2v3.local.plist.local.plist.local.plist
+*.mode1v3.local.plist.local.plist.local.plist.lock
+*.mode2v3.local.plist.local.plist.local.plist.lock
+*.mode1v3.local.plist.local.plist.local.plist.local
+*.mode2v3.local.plist.local.plist.local.plist.local
+*.mode1v3.local.plist.local.plist.local.plist.local.lock
+*.mode2v3.local.plist.local.plist.local.plist.local.lock
