@@ -47,8 +47,14 @@ class AsetuksetNakyma extends StatelessWidget {
                       ),
                       value: asetuksetTarjoaja.aanetKaytossa, // Äänet (päällä/pois)
                       onChanged: (arvo) {
-                        asetuksetTarjoaja.muutaAanetKayttoon(arvo); // Päivittää äänten tilan
+                        // Korjattu funktion nimi vastaamaan AsetuksetTarjoaja luokkaa
+                        asetuksetTarjoaja.setAanetKaytossa(arvo); // Päivittää äänten tilan
                       },
+                      // SwitchListTilen värit
+                      activeColor: Colors.deepPurpleAccent,
+                      activeTrackColor: Colors.deepPurple.shade200,
+                      inactiveThumbColor: Colors.grey.shade400,
+                      inactiveTrackColor: Colors.grey.shade200,
                     );
                   },
                 ),
@@ -56,7 +62,7 @@ class AsetuksetNakyma extends StatelessWidget {
                 // Äänenvoimakkuuden liukusäädin
                 const Text(
                   'Äänenvoimakkuus', // Otsikko äänenvoimakkuuden säädölle
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Consumer<AsetuksetTarjoaja>(
                   builder: (context, asetuksetTarjoaja, child) {
@@ -70,8 +76,13 @@ class AsetuksetNakyma extends StatelessWidget {
                           divisions: 10, // Liukusäätimen jako-osat
                           label: '${asetuksetTarjoaja.aanenVoimakkuus}%', // Näyttää liukusäätimen arvon prosentteina
                           onChanged: (arvo) {
-                            asetuksetTarjoaja.asetaAanenVoimakkuus(arvo.toInt()); // Päivittää äänenvoimakkuuden
+                            // Korjattu funktion nimi vastaamaan AsetuksetTarjoaja luokkaa
+                            asetuksetTarjoaja.setAanenVoimakkuus(arvo.toInt()); // Päivittää äänenvoimakkuuden
                           },
+                          // Sliderin värit
+                          activeColor: Colors.deepPurpleAccent,
+                          inactiveColor: Colors.deepPurple.shade200,
+                          thumbColor: Colors.white,
                         ),
                         // Näytetään äänenvoimakkuus prosentteina liukusäätimen alapuolella
                         Center(
@@ -84,6 +95,46 @@ class AsetuksetNakyma extends StatelessWidget {
                     );
                   },
                 ),
+                const SizedBox(height: 30), // Lisää tilaa seuraavalle osiolle
+                // Kysymysten hakutavan otsikko
+                const Text(
+                  'Kysymysten lähde', // Otsikko kysymysten hakutavalle
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 10), // Etäisyys seuraavaan osaan
+                // Switch kytkin kysymysten hakutavalle
+                Consumer<AsetuksetTarjoaja>(
+                  builder: (context, asetuksetTarjoaja, child) {
+                    return SwitchListTile(
+                      title: const Text(
+                        'Hae paikallisesti (jos saatavilla)', // Teksti hakutavan valinnalle
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      value: asetuksetTarjoaja.haePaikallisesti, // Nykyinen hakutapa (paikallinen/API)
+                      onChanged: (arvo) {
+                        asetuksetTarjoaja.setHaePaikallisesti(arvo); // Päivittää hakutavan
+                      },
+                      // SwitchListTilen värit
+                      activeColor: Colors.deepPurpleAccent,
+                      activeTrackColor: Colors.deepPurple.shade200,
+                      inactiveThumbColor: Colors.grey.shade400,
+                      inactiveTrackColor: Colors.grey.shade200,
+                    );
+                  },
+                ),
+                // Voit lisätä tähän myös painikkeen paikallisten kysymysten poistamiseksi, jos haluat
+                // Esimerkki:
+                // const SizedBox(height: 20),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     // Kutsu TriviaTarjoajan poistaPaikallisetKysymykset funktiota
+                //     // Huom: Tarvitset pääsyn TriviaTarjoajaan tässä, esim. Provider.of<TriviaTarjoaja>(context, listen: false).poistaPaikallisetKysymykset(...)
+                //     // Sinun täytyy tietää määrä, vaikeus ja kieli poistaaksesi oikeat kysymykset.
+                //     // Tämä voi olla monimutkaisempaa riippuen siitä, miten haluat tämän toiminnon toteuttaa.
+                //     print('Poista paikalliset kysymykset painettu');
+                //   },
+                //   child: const Text('Poista paikalliset kysymykset'),
+                // ),
               ],
             ),
           ),

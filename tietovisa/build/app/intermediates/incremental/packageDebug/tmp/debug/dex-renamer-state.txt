@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 #Mon May 12 20:21:28 EEST 2025
+=======
+#Mon May 12 00:17:32 EEST 2025
+>>>>>>> Stashed changes
 base.0=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
 base.2=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex

@@ -2,6 +2,7 @@ C/C++ Structured LogO
 M
 KC:\dev\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txtC
 A
+<<<<<<< Updated upstream
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	€Ÿ¬ì2§ Žž·ˆÑ2c
 a
 _C:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\additional_project_files.txt	€Ÿ¬ì2 …§…ì2`
@@ -26,3 +27,29 @@ W
 UC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\prefab_config.json	€Ÿ¬ì2( —…§…ì2^
 \
 ZC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\symbol_folder_index.txt	€Ÿ¬ì2Q ˜…§…ì2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	¤¦×‰ì2§ Žž·ˆÑ2c
+a
+_C:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\additional_project_files.txt	¤¦×‰ì2 …§…ì2`
+^
+\C:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\android_gradle_build.json	¤¦×‰ì2Ÿ ‘…§…ì2e
+c
+aC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\android_gradle_build_mini.json	¤¦×‰ì2ú “…§…ì2R
+P
+NC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\build.ninja	¤¦×‰ì2îÓ ì„§…ì2V
+T
+RC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\build.ninja.txt	¤¦×‰ì2[
+Y
+WC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\build_file_index.txt	¤¦×‰ì2K ™…§…ì2\
+Z
+XC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\compile_commands.json	¤¦×‰ì2	`
+^
+\C:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\compile_commands.json.bin	¤¦×‰ì2
+f
+d
+bC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\metadata_generation_command.txt	¤¦×‰ì2¥ •…§…ì2Y
+W
+UC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\prefab_config.json	¤¦×‰ì2( —…§…ì2^
+\
+ZC:\flutter\tiimi7\tietovisa\android\app\.cxx\Debug\125u455s\x86_64\symbol_folder_index.txt	¤¦×‰ì2Q ˜…§…ì2
+>>>>>>> Stashed changes

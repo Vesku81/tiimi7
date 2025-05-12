@@ -3,13 +3,36 @@ import 'package:http/http.dart' as http;
 import 'package:html_unescape/html_unescape.dart';
 import '../mallit/kysymys.dart';
 import 'package:tietovisa/utils/vakiot.dart';
-import 'package:dart_openai/dart_openai.dart'; // Tuodaan OpenAI-paketti
+import 'package:dart_openai/dart_openai.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Tuodaan shared_preferences
 
 class TriviaApiPalvelu {
-  final String _openAiApiKey = "API Avain"; // <-- VAIHDA TÄHÄN OMA API-AVAIMESI
 
-  // Funktio, joka hakee kysymyksiä Trivia API:sta ja kääntää ne tarvittaessa
+  final String _openAiApiKey = "oma api avain"; // <-- VAIHDA TÄHÄN OMA API-AVAIMESI
+
+
+  // Funktio, joka hakee kysymykset Trivia API:sta, kääntää ne tarvittaessa ja tallentaa/hakee paikallisesti
   Future<List<Kysymys>> haeKysymykset(int maara, String vaikeus, String kohdeKieli) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Luodaan tallennusavain, joka perustuu kysymysten määrään, vaikeuteen ja kohdekieleen
+    final String tallennusAvain = 'trivia_kysymykset_${maara}_${vaikeus}_$kohdeKieli';
+
+    // Yritetään hakea kysymykset paikallisesta tallennuksesta ensin
+    final String? tallennettuData = prefs.getString(tallennusAvain);
+    if (tallennettuData != null) {
+      try {
+        final List<dynamic> jsonList = json.decode(tallennettuData);
+        // Muunnetaan JSON-lista Kysymys-objekteiksi
+        List<Kysymys> paikallisetKysymykset = jsonList.map((json) => Kysymys.fromJson(json)).toList();
+        print('Kysymykset ladattu paikallisesta tallennuksesta.');
+        return paikallisetKysymykset;
+      } catch (e) {
+        print('Virhe paikallisen datan purkamisessa: $e');
+        // Jatka API-kutsuun, jos paikallinen data on virheellinen
+      }
+    }
+
+    // Jos paikallista dataa ei löytynyt tai se oli virheellinen, haetaan API:sta
     try {
       final url = Uri.parse(
           '$apiBaseUrl/api.php?amount=$maara&difficulty=$vaikeus&type=multiple');
@@ -28,12 +51,11 @@ class TriviaApiPalvelu {
 
           List<Kysymys> kysymykset = [];
           for (var item in data['results']) {
-            // Purkaa HTML-entiteetit ensin
             final alkuperainenKategoria = unescape.convert(item['category']);
             final alkuperainenKysymysTeksti = unescape.convert(item['question']);
             final alkuperainenOikeaVastaus = unescape.convert(item['correct_answer']);
-            final alkuperaisetVaaratVastaukset = (item['incorrect_answers'] as List<dynamic>) // Varmistetaan tyyppi
-                .map((vastaus) => unescape.convert(vastaus.toString())) // Muunnetaan Stringiksi varmuuden vuoksi
+            final alkuperaisetVaaratVastaukset = (item['incorrect_answers'] as List<dynamic>)
+                .map((vastaus) => unescape.convert(vastaus.toString()))
                 .toList();
 
             // Käännetään vain jos kohdekieli ei ole englanti
@@ -48,9 +70,14 @@ class TriviaApiPalvelu {
               vaikeus: item['difficulty'],
               kysymysTeksti: kysymysTeksti,
               oikeaVastaus: oikeaVastaus,
-              vaaratVastaukset: vaaratVastaukset.cast<String>(), // Varmistetaan tyyppi
+              vaaratVastaukset: vaaratVastaukset.cast<String>(),
             ));
           }
+
+          // Tallennetaan käännetyt kysymykset paikallisesti
+          final List<Map<String, dynamic>> jsonList = kysymykset.map((kysymys) => kysymys.toJson()).toList();
+          await prefs.setString(tallennusAvain, json.encode(jsonList));
+          print('Käännetyt kysymykset tallennettu paikallisesti.');
 
           return kysymykset;
         } else {
@@ -69,7 +96,7 @@ class TriviaApiPalvelu {
     }
   }
 
-  // Funktio tekstin kääntämiseen OpenAI:n avulla
+  // Funktio tekstin kääntämiseen OpenAI:n avulla (sama kuin aiemmin)
   Future<String> kaannaTeksti(String teksti, String kohdeKieli) async {
     // Jos teksti on tyhjä tai kohdekieli on englanti, ei tarvitse kääntää
     if (teksti.isEmpty || kohdeKieli == 'en') {
