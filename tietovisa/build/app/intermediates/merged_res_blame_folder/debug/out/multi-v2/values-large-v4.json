@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.tietovisa.app-mergeDebugResources-39:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.example.tietovisa.app-mergeDebugResources-4:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\voipi\\.gradle\\caches\\transforms-3\\06bab64d18d6a76121e7d6296c8e6044\\transformed\\appcompat-1.1.0\\res\\values-large-v4\\values-large-v4.xml",
+                    "source": "C:\\Users\\vesku\\.gradle\\caches\\transforms-3\\d4f9aea749ddfbe417f877003f397369\\transformed\\appcompat-1.6.1\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",

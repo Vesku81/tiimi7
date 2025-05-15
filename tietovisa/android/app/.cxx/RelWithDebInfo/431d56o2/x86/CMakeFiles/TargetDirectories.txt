@@ -1,0 +1,2 @@
+C:/GitHub/tiimi7/tietovisa/android/app/.cxx/RelWithDebInfo/431d56o2/x86/CMakeFiles/edit_cache.dir
+C:/GitHub/tiimi7/tietovisa/android/app/.cxx/RelWithDebInfo/431d56o2/x86/CMakeFiles/rebuild_cache.dir

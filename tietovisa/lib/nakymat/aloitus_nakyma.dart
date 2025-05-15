@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart'; // Flutterin peruswidgetit ja tyylit
-import 'package:provider/provider.dart'; // Provider-kirjasto tilanhallintaan
-import '../tarjoajat/trivia_tarjoaja.dart'; // Trivia-pelin tila
-import 'peli_nakyma.dart'; // Peli-näkymä
-import 'asetukset_nakyma.dart'; // Asetukset-näkymä
-import 'tulokset_nakyma.dart'; // Tulokset-näkymä
+import 'package:flutter/material.dart';           // Flutterin peruswidgetit ja tyylit
+import 'package:provider/provider.dart';          // Provider‐kirjasto tilanhallintaan
 
-// Aloitusnakyma toimii sovelluksen aloitusnäyttönä
+import '../tarjoajat/trivia_tarjoaja.dart';       // Trivia‐pelin tila
+import 'peli_nakyma.dart';                        // Peli‐näkymä (tässä varmistetaan, että PeliNakyma-luokka löytyy)
+import 'asetukset_nakyma.dart';                   // Asetukset‐näkymä
+import 'tulokset_nakyma.dart';                    // Tulokset‐näkymä
+
+/// Aloitusnäkymä toimii sovelluksen aloitusnäyttönä
 class AloitusNakyma extends StatefulWidget {
   const AloitusNakyma({super.key});
 
@@ -13,41 +14,36 @@ class AloitusNakyma extends StatefulWidget {
   State<AloitusNakyma> createState() => AloitusNakymaTila();
 }
 
-// Hallitsee näkymän tilaa, kuten käyttäjän syöttämää nimeä
+/// Hallitsee näkymän tilaa, kuten käyttäjän syöttämää nimeä
 class AloitusNakymaTila extends State<AloitusNakyma> {
-  final TextEditingController _nimiOhjain = TextEditingController(); // Tekstikentän hallinta
+  final TextEditingController _nimiOhjain = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true, // Keskittää AppBarin otsikon
-        title: const Text('Tervetuloa TriviaVisaan'), // AppBarin otsikko
-        backgroundColor: Colors.deepPurpleAccent, // AppBarin taustaväri
+        centerTitle: true,
+        title: const Text('Tervetuloa TriviaVisaan'),
+        backgroundColor: Colors.deepPurpleAccent,
       ),
       drawer: Drawer(
         child: Stack(
           children: [
-            // Drawer-valikon taustakuva
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      'assets/images/nav_menu.jpg'), // Drawerin taustakuva
-                  fit: BoxFit.cover, // Skaalataan kuva koko näkymän kattavaksi
+                  image: AssetImage('assets/images/nav_menu.jpg'),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            // Drawer-valikon sisältö
             ListView(
               padding: EdgeInsets.zero,
               children: [
-                // Drawer-header
                 DrawerHeader(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/drawer_header_background.jpg'), // Headerin taustakuva
+                      image: AssetImage('assets/images/drawer_header_background.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -57,7 +53,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'TriviaVisa', // Sovelluksen nimi
+                          'TriviaVisa',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -71,9 +67,9 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 10), // Tekstien välinen etäisyys
+                        SizedBox(height: 10),
                         Text(
-                          'Vesa Huhtaniska & Sami Pyhtinen', // Tekijöiden nimet
+                          'Vesa Huhtaniska & Sami Pyhtinen',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -91,100 +87,75 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     ),
                   ),
                 ),
-                // Drawer-valikon linkit
                 ListTile(
-                  leading: const Icon(Icons.home, color: Colors.white), // Ikoni
-                  title: const Text(
-                    'Aloita',
-                    style: TextStyle(color: Colors.white), // Teksti
-                  ),
+                  leading: const Icon(Icons.home, color: Colors.white),
+                  title: const Text('Aloita', style: TextStyle(color: Colors.white)),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const AloitusNakyma()), // Uudelleenlataa aloitusnäkymän
+                      MaterialPageRoute(builder: (_) => const AloitusNakyma()),
                     );
                   },
                 ),
                 ListTile(
-                  leading:
-                  const Icon(Icons.question_answer, color: Colors.white), // Ikoni
-                  title: const Text(
-                    'Trivia',
-                    style: TextStyle(color: Colors.white), // Teksti
-                  ),
+                  leading: const Icon(Icons.question_answer, color: Colors.white),
+                  title: const Text('Trivia', style: TextStyle(color: Colors.white)),
                   onTap: () {
-                    Navigator.pop(context); // Sulkee Drawer-valikon
-                    Provider.of<TriviaTarjoaja>(context, listen: false)
-                        .nollaaPeli(); // Nollaa pelitilan
+                    Navigator.pop(context);
+                    Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PeliNakyma(
+                        builder: (_) => PeliNakyma(
                           kayttajaNimi: _nimiOhjain.text.isNotEmpty
                               ? _nimiOhjain.text
-                              : 'Pelaaja', // Käytetään "Pelaaja" nimeä oletuksena, jos pelaaja ei ole syöttänyt nimeä nimikenttään
+                              : 'Pelaaja',
                         ),
                       ),
                     );
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings, color: Colors.white), // Ikoni
-                  title: const Text(
-                    'Asetukset',
-                    style: TextStyle(color: Colors.white), // Teksti
-                  ),
+                  leading: const Icon(Icons.settings, color: Colors.white),
+                  title: const Text('Asetukset', style: TextStyle(color: Colors.white)),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                          const AsetuksetNakyma()), // Navigoi asetuksiin
+                      MaterialPageRoute(builder: (_) => const AsetuksetNakyma()),
                     );
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.score, color: Colors.white), // Ikoni
-                  title: const Text(
-                    'Tulokset',
-                    style: TextStyle(color: Colors.white), // Teksti
-                  ),
+                  leading: const Icon(Icons.score, color: Colors.white),
+                  title: const Text('Tulokset', style: TextStyle(color: Colors.white)),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const TuloksetNakyma(
-                          kayttajaNimi: "Käyttäjä", // Oletusnimi tuloksissa
-                          //  pisteet: 0, // Alustetaan tulokset
+                        builder: (_) => const TuloksetNakyma(
+                          kayttajaNimi: 'Käyttäjä',
                         ),
                       ),
                     );
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.exit_to_app, color: Colors.white), // Ikoni
-                  title: const Text(
-                    'Lopeta',
-                    style: TextStyle(color: Colors.white), // Teksti
-                  ),
+                  leading: const Icon(Icons.exit_to_app, color: Colors.white),
+                  title: const Text('Lopeta', style: TextStyle(color: Colors.white)),
                   onTap: () {
-                    Navigator.pop(context); // Sulkee Drawer-valikon
-                    showDialog(
+                    Navigator.pop(context);
+                    showDialog<bool>(
                       context: context,
-                      builder: (context) => AlertDialog(
+                      builder: (_) => AlertDialog(
                         title: const Text('Lopeta sovellus'),
-                        content:
-                        const Text('Haluatko varmasti sulkea sovelluksen?'), // Vahvistetaan, että haluaako käyttäjä sulkea sovelluksen
+                        content: const Text('Haluatko varmasti sulkea sovelluksen?'),
                         actions: [
                           TextButton(
-                            onPressed: () =>
-                                Navigator.of(context).pop(), // Peruuta sovelluksen sulkeminen
+                            onPressed: () => Navigator.of(context).pop(false),
                             child: const Text('Peruuta'),
                           ),
                           TextButton(
-                            onPressed: () =>
-                                Navigator.of(context).pop(true), // Vahvista sovelluksen sulkeminen
+                            onPressed: () => Navigator.of(context).pop(true),
                             child: const Text('Kyllä'),
                           ),
                         ],
@@ -192,7 +163,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     ).then((lopeta) {
                       if (lopeta == true) {
                         Future.delayed(const Duration(milliseconds: 200), () {
-                          Navigator.pop(context); // Sulkee sovelluksen
+                          Navigator.of(context).pop();
                         });
                       }
                     });
@@ -203,19 +174,16 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
           ],
         ),
       ),
-      // Aloitusnäytön sisältö
       body: Stack(
         children: [
-          // Taustakuva
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background.jpg'), // Taustakuva
-                fit: BoxFit.cover, // Skaalataan kuva koko näkymän kattavaksi
+                image: AssetImage('assets/images/background.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          // Näytön sisältö
           Padding(
             padding: const EdgeInsets.all(100.0),
             child: Column(
@@ -223,48 +191,37 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
               children: [
                 const SizedBox(height: 20),
                 const Text(
-                  'Anna nimesi', // Otsikko
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  'Anna nimesi',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                // Tekstikenttä nimen syöttöön
                 TextField(
-                  controller: _nimiOhjain, // Hallitsee käyttäjän syöttämää tekstiä
+                  controller: _nimiOhjain,
                   textAlign: TextAlign.center,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(), // Tekstikentän reunus
-                    hintText: 'Kirjoita nimesi', // Vihjeteksti nimensyöttö kentässä
-                    hintStyle: TextStyle(
-                      color: Colors.white, // Vihjetekstin väri
-                    ),
+                    border: OutlineInputBorder(),
+                    hintText: 'Kirjoita nimesi',
+                    hintStyle: TextStyle(color: Colors.white),
                   ),
-                  style: const TextStyle(
-                    color: Colors.white, // Käyttäjän kirjoittaman tekstin väri
-                  ),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 20),
-                // Aloita-painike
                 ElevatedButton(
                   onPressed: () {
-                    Provider.of<TriviaTarjoaja>(context, listen: false)
-                        .nollaaPeli(); // Nollaa pelitilan
+                    Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PeliNakyma(
+                        builder: (_) => PeliNakyma(
                           kayttajaNimi: _nimiOhjain.text.isNotEmpty
                               ? _nimiOhjain.text
-                              : 'Pelaaja', // Käytetään oletusnimeä, jos nimeä ei ole syötetty
+                              : 'Pelaaja',
                         ),
                       ),
                     );
                   },
-                  child: const Text('Aloita Peli'), // Painikkeen teksti
+                  child: const Text('Aloita Peli'),
                 ),
               ],
             ),

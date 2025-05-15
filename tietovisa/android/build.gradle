@@ -1,3 +1,17 @@
+buildscript {
+    // Pakotetaan yhteinen Kotlin‐plugin
+    ext.kotlin_version = '1.9.20'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // Flutter‐Gradle‐pluginia EI tarvitse lisätä tänne – se kytkeytyy
+        // settings.gradle → includeBuild("$flutterSdkPath/.../gradle")
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -8,9 +22,19 @@ allprojects {
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// --------------------------------------------------
+// AGP 7+ vaatii namespace jokaiseen library‐moduuliin.
+// --------------------------------------------------
+
+// AGP 7+ edellyttää namespace-arvon jokaiselle Android-kirjastolle
+subprojects { subproj ->
+    subproj.plugins.withId('com.android.library') {
+        def libExt = subproj.extensions.getByType(com.android.build.gradle.LibraryExtension)
+        libExt.namespace = subproj.name
+    }
 }
 
 tasks.register("clean", Delete) {

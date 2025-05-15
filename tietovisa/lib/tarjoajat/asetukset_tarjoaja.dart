@@ -2,68 +2,82 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AsetuksetTarjoaja with ChangeNotifier {
-  int _aanenVoimakkuus = 50; // Oletusäänenvoimakkuus
-  bool _aanetKaytossa = true; // Oletuksena äänet päällä
-  String _kieli = 'fi'; // Oletuskieli suomi
-  // Uusi asetus: haetaanko kysymykset paikallisesti (true) vai API:sta (false)
-  bool _haePaikallisesti = false; // Oletuksena haetaan API:sta
+  bool _aanetKaytossa = true;
+  int _aanenVoimakkuus = 50;
+  bool _kaytaSpeechToText = false;
+  double _ttsRate = 0.5;
+  double _ttsPitch = 1.0;
+  bool _kaytaKaannokset = false;  // Käännösten käyttöasetus
 
-  int get aanenVoimakkuus => _aanenVoimakkuus;
+  // Getterit
   bool get aanetKaytossa => _aanetKaytossa;
-  String get kieli => _kieli;
-  // Getter uudelle asetukselle
-  bool get haePaikallisesti => _haePaikallisesti;
+  int get aanenVoimakkuus => _aanenVoimakkuus;
+  bool get kaytaSpeechToText => _kaytaSpeechToText;
+  double get ttsRate => _ttsRate;
+  double get ttsPitch => _ttsPitch;
+  bool get kaytaKaannokset => _kaytaKaannokset;  // Getter käännöksille
+
+  // Setterit
+  set kaytaSpeechToText(bool val) => _setSpeechToText(val);
+  set ttsRate(double val) => _setTtsRate(val);
+  set ttsPitch(double val) => _setTtsPitch(val);
+  set kaytaKaannokset(bool val) => _setKaytaKaannokset(val);  // Setter käännöksille
 
   AsetuksetTarjoaja() {
-    _lataaAsetukset(); // Ladataan asetukset käynnistyksen yhteydessä
+    _load();
   }
 
-  // Funktio asetusten lataamiseen SharedPreferencesista
-  Future<void> _lataaAsetukset() async {
+  Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    _aanenVoimakkuus = prefs.getInt('aanenVoimakkuus') ?? 50;
-    _aanetKaytossa = prefs.getBool('aanetKaytossa') ?? true;
-    _kieli = prefs.getString('kieli') ?? 'fi';
-    // Ladataan uusi asetus
-    _haePaikallisesti = prefs.getBool('haePaikallisesti') ?? false;
+    _aanetKaytossa = prefs.getBool('aanet_kaytossa') ?? true;
+    _aanenVoimakkuus = prefs.getInt('aanen_voimakkuus') ?? 50;
+    _kaytaSpeechToText = prefs.getBool('kayta_speech_to_text') ?? false;
+    _ttsRate = prefs.getDouble('tts_rate') ?? 0.5;
+    _ttsPitch = prefs.getDouble('tts_pitch') ?? 1.0;
+    _kaytaKaannokset = prefs.getBool('kayta_kaannokset') ?? false;
     notifyListeners();
   }
 
-  // Funktio äänenvoimakkuuden asettamiseen
-  void setAanenVoimakkuus(int voimakkuus) {
-    _aanenVoimakkuus = voimakkuus;
-    _tallennaAsetukset(); // Tallennetaan asetus
-    notifyListeners();
-  }
-
-  // Funktio äänten käytön asettamiseen
-  void setAanetKaytossa(bool kaytossa) {
-    _aanetKaytossa = kaytossa;
-    _tallennaAsetukset(); // Tallennetaan asetus
-    notifyListeners();
-  }
-
-  // Funktio kielen asettamiseen
-  void setKieli(String kieli) {
-    _kieli = kieli;
-    _tallennaAsetukset(); // Tallennetaan asetus
-    notifyListeners();
-  }
-
-  // Funktio kysymysten hakutavan asettamiseen
-  void setHaePaikallisesti(bool paikallisesti) {
-    _haePaikallisesti = paikallisesti;
-    _tallennaAsetukset(); // Tallennetaan asetus
-    notifyListeners();
-  }
-
-  // Funktio asetusten tallentamiseen SharedPreferencesiin
-  Future<void> _tallennaAsetukset() async {
+  Future<void> muutaAanetKayttoon(bool val) async {
+    _aanetKaytossa = val;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('aanenVoimakkuus', _aanenVoimakkuus);
-    await prefs.setBool('aanetKaytossa', _aanetKaytossa);
-    await prefs.setString('kieli', _kieli);
-    // Tallennetaan uusi asetus
-    await prefs.setBool('haePaikallisesti', _haePaikallisesti);
+    await prefs.setBool('aanet_kaytossa', val);
+    notifyListeners();
+  }
+
+  Future<void> asetaAanenVoimakkuus(int val) async {
+    _aanenVoimakkuus = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('aanen_voimakkuus', val);
+    notifyListeners();
+  }
+
+  Future<void> _setSpeechToText(bool val) async {
+    _kaytaSpeechToText = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('kayta_speech_to_text', val);
+    notifyListeners();
+  }
+
+  Future<void> _setTtsRate(double val) async {
+    _ttsRate = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('tts_rate', val);
+    notifyListeners();
+  }
+
+  Future<void> _setTtsPitch(double val) async {
+    _ttsPitch = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('tts_pitch', val);
+    notifyListeners();
+  }
+
+  // Uusi metodi käännösten asetukselle
+  Future<void> _setKaytaKaannokset(bool val) async {
+    _kaytaKaannokset = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('kayta_kaannokset', val);
+    notifyListeners();
   }
 }
