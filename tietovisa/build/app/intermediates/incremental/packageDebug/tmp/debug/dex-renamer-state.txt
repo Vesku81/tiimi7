@@ -1,10 +1,10 @@
-#Thu May 15 21:34:13 EEST 2025
-base.0=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
-base.2=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.3=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\10\\classes.dex
-base.4=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
-base.5=C\:\\GitHub\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+#Thu May 15 23:34:59 EEST 2025
+base.0=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.2=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.3=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\10\\classes.dex
+base.4=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+base.5=C\:\\flutter\\tiimi7\\tietovisa\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=0/classes.dex

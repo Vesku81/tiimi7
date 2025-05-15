@@ -1,0 +1,2 @@
+C:/flutter/tiimi7/tietovisa/android/app/.cxx/Debug/30164544/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/flutter/tiimi7/tietovisa/android/app/.cxx/Debug/30164544/armeabi-v7a/CMakeFiles/rebuild_cache.dir
