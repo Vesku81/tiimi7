@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../mallit/kysymys.dart';
 
 class OpenAIPalvelu {
-  final String _apiKey = 'Oma koodi tähän'; // TALLENNA TÄMÄ TURVALLISESTI!
+  final String _apiKey = 'Oma koodi'; // TALLENNA TÄMÄ TURVALLISESTI!
   final String _apiUrl = 'https://api.openai.com/v1/chat/completions'; // Tai muu päätepiste
 
   Future<Kysymys?> generoiKysymys(String aihe, String vaikeustaso) async {
