@@ -1,62 +1,64 @@
 // mallit/kysymys.dart
+import 'package:uuid/uuid.dart'; // Varmista, että tämä on lisätty pubspec.yaml
 
-// Kysymys luokka mallintaa yhden kysymyksen, joka sisältää kysymyksen tekstin, oikean ja väärät vastaukset sekä kysymykseen liittyviä tietoja, kuten kategorian ja vaikeustason.
 class Kysymys {
-  // Kategorian nimi, esim. "Tiede" tai "Historia". Tehdään valinnaiseksi.
-  final String? kategoria;
-
-  // Tyyppi, esim. "multiple" (monivalinta). Tehdään valinnaiseksi.
-  final String? tyyppi;
-
-  // Vaikeustaso, esim. "helppo/easy", "keskitaso/medium" tai "vaikea/hard". Tehdään valinnaiseksi.
-  final String? vaikeus;
-
-  // Itse kysymyksen teksti, joka esitetään käyttäjälle
+  final String id;
+  final String? kategoria; // Esim. "Maantieto", "Historia", tai OpenAI:n käyttämä aihealue
+  final String? tyyppi;     // Esim. "multiple" (monivalinta), "boolean" (tosi/epätosi) - API:sta
+  final String? vaikeus;    // Esim. "easy", "medium", "hard"
   final String kysymysTeksti;
-
-  // Kysymyksen oikea vastaus
   final String oikeaVastaus;
-
-  // Lista vääristä vastauksista
   final List<String> vaaratVastaukset;
+  final String lahde; // Esim. "openai_generoitu", "trivia_api_käännetty"
+  final DateTime lisattyPvm;
 
-  // Konstruktori, jolla luodaan uusi `Kysymys`-olio.
-  // Kategoria, tyyppi ja vaikeus ovat nyt valinnaisia.
   Kysymys({
-    this.kategoria, // Ei enää 'required'
-    this.tyyppi,    // Ei enää 'required'
-    this.vaikeus,   // Ei enää 'required'
+    String? id, // Tehdään id:stä valinnainen, jotta se voidaan luoda myöhemmin tarvittaessa
+    this.kategoria,
+    this.tyyppi,
+    this.vaikeus,
     required this.kysymysTeksti,
     required this.oikeaVastaus,
     required this.vaaratVastaukset,
-  });
+    required this.lahde,
+    DateTime? lisattyPvm, // Tehdään valinnaiseksi, oletusarvo asetetaan konstruktorissa
+  }) : this.id = id ?? Uuid().v4(), // Jos id:tä ei anneta, luo uusi
+        this.lisattyPvm = lisattyPvm ?? DateTime.now(); // Jos pvm ei anneta, käytä nykyhetkeä
 
-  // Funktio, joka luo `Kysymys`-olion perinteisen API:n JSON-muotoisesta datasta
-  factory Kysymys.malliApiJsonista(Map<String, dynamic> json) {
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'kategoria': kategoria,
+    'tyyppi': tyyppi,
+    'vaikeus': vaikeus,
+    'kysymys': kysymysTeksti,
+    'oikea_vastaus': oikeaVastaus,
+    'vaarat_vastaukset': vaaratVastaukset,
+    'lahde': lahde,
+    'lisatty_pvm': lisattyPvm.toIso8601String(),
+  };
+
+  factory Kysymys.fromJson(Map<String, dynamic> json) {
     return Kysymys(
-      kategoria: json['category'] as String?, // Varmistetaan tyyppi ja null-turvallisuus
-      tyyppi: json['type'] as String?,
-      vaikeus: json['difficulty'] as String?,
-      kysymysTeksti: json['question'] as String, // Oletetaan, että nämä ovat aina olemassa API-vastauksessa
-      oikeaVastaus: json['correct_answer'] as String,
-      vaaratVastaukset: List<String>.from(json['incorrect_answers'] as List<dynamic>),
+      id: json['id'] as String,
+      kategoria: json['kategoria'] as String?,
+      tyyppi: json['tyyppi'] as String?,
+      vaikeus: json['vaikeus'] as String?,
+      kysymysTeksti: json['kysymys'] as String,
+      oikeaVastaus: json['oikea_vastaus'] as String,
+      vaaratVastaukset: List<String>.from(json['vaarat_vastaukset'] as List<dynamic>),
+      lahde: json['lahde'] as String? ?? 'tuntematon', // Oletusarvo vanhemmille datoille
+      lisattyPvm: json['lisatty_pvm'] != null
+          ? DateTime.parse(json['lisatty_pvm'] as String)
+          : DateTime.now(), // Oletusarvo vanhemmille datoille
     );
   }
 
-  // Uusi factory-konstruktori OpenAI:n generoimalle JSON-datalle
-  // Olettaen, että OpenAI-promptisi pyytää JSON-objektia, jossa on avaimet:
-  // "kysymys", "oikea_vastaus", "vaarat_vastaukset"
-  // Ja mahdollisesti "kategoria", "tyyppi", "vaikeus", jos olet pyytänyt niitä.
-  factory Kysymys.malliOpenAIJsonista(Map<String, dynamic> json) {
-    return Kysymys(
-      // Jos OpenAI ei palauta näitä, ne ovat null, mikä on nyt sallittua.
-      // Voit myös antaa oletusarvoja, jos haluat.
-      kategoria: json['kategoria'] as String?, // Olettaen, että promptisi käyttää tätä avainta
-      tyyppi: json['tyyppi'] as String?,       // Olettaen, että promptisi käyttää tätä avainta
-      vaikeus: json['vaikeus'] as String?,     // Olettaen, että promptisi käyttää tätä avainta
-      kysymysTeksti: json['kysymys'] as String, // Oletetaan, että nämä ovat aina olemassa OpenAI-vastauksessa
-      oikeaVastaus: json['oikea_vastaus'] as String,
-      vaaratVastaukset: List<String>.from(json['vaarat_vastaukset'] as List<dynamic>),
-    );
+  String get normalisoituKysymysTeksti => kysymysTeksti.trim().toLowerCase();
+
+  // Apumetodi kaikkien vastausvaihtoehtojen sekoittamiseen peliä varten
+  List<String> get sekoitetutVastaukset {
+    final kaikki = <String>[oikeaVastaus, ...vaaratVastaukset];
+    kaikki.shuffle();
+    return kaikki;
   }
 }
