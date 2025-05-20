@@ -183,7 +183,6 @@ class TriviaTarjoaja with ChangeNotifier {
         _pisteet += 20;
       } else {
         _pisteet -= 5;
-        if (_pisteet < 0) _pisteet = 0;
       }
       notifyListeners();
     }
