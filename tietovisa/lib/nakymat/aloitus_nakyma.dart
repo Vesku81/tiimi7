@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';           // Flutterin peruswidgetit ja 
 import 'package:provider/provider.dart';          // Provider‐kirjasto tilanhallintaan
 
 import '../tarjoajat/trivia_tarjoaja.dart';       // Trivia‐pelin tila
-import 'peli_nakyma.dart';                        // Peli‐näkymä (tässä varmistetaan, että PeliNakyma-luokka löytyy)
+import 'peli_nakyma.dart';                        // Peli‐näkymä
 import 'asetukset_nakyma.dart';                   // Asetukset‐näkymä
 import 'tulokset_nakyma.dart';                    // Tulokset‐näkymä
 
@@ -23,8 +23,8 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Tervetuloa TriviaVisaan'),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: const Text('Tervetuloa Tietovisaan'),
+        backgroundColor: Colors.indigo,
       ),
       drawer: Drawer(
         child: Stack(
@@ -47,46 +47,32 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'TriviaVisa',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(2, 2),
-                                blurRadius: 4.0,
-                                color: Colors.black,
-                              ),
-                            ],
+                  child: const SizedBox.shrink(), // tyhjä child, pakollinen
+                ),
+
+                // --- "Tietovisa" yläpuolelle Aloita-painiketta ---
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(
+                    child: Text(
+                      'Tietovisa',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(2, 2),
+                            blurRadius: 4.0,
+                            color: Colors.black,
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Vesa Huhtaniska & Sami Pyhtinen',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(1, 1),
-                                blurRadius: 2.0,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.home, color: Colors.white),
                   title: const Text('Aloita', style: TextStyle(color: Colors.white)),
@@ -97,6 +83,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     );
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.question_answer, color: Colors.white),
                   title: const Text('Trivia', style: TextStyle(color: Colors.white)),
@@ -115,6 +102,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     );
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.settings, color: Colors.white),
                   title: const Text('Asetukset', style: TextStyle(color: Colors.white)),
@@ -125,6 +113,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     );
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.score, color: Colors.white),
                   title: const Text('Tulokset', style: TextStyle(color: Colors.white)),
@@ -132,13 +121,12 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const TuloksetNakyma(
-                          kayttajaNimi: 'Käyttäjä',
-                        ),
+                        builder: (_) => const TuloksetNakyma(kayttajaNimi: 'Käyttäjä'),
                       ),
                     );
                   },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.exit_to_app, color: Colors.white),
                   title: const Text('Lopeta', style: TextStyle(color: Colors.white)),
@@ -169,6 +157,30 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     });
                   },
                 ),
+
+                const SizedBox(height: 50),
+                const Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Vesa Huhtaniska',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        '&',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'Sami Pyhtinen',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           ],
@@ -179,7 +191,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background.jpg'),
+                image: AssetImage('assets/images/aloitus_background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -192,7 +204,11 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                 const SizedBox(height: 20),
                 const Text(
                   'Anna nimesi',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),

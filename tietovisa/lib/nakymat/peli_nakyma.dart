@@ -274,7 +274,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('TriviaVisa'),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Colors.indigo,
         actions: [
           Consumer<AsetuksetTarjoaja>(
             builder: (_, aset, __) {
@@ -294,7 +294,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background.jpg'),
+                image: AssetImage('assets/images/peli_background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
