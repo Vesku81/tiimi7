@@ -1,4 +1,4 @@
-// tarjoajat/trivia_tarjoaja.dart
+// trivia_tarjoaja.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../mallit/kysymys.dart';
@@ -16,15 +16,13 @@ class TriviaTarjoaja with ChangeNotifier {
   int _pisteet = 0;
   bool _onLataus = false;
   String? _virhe;
-
   Set<String> _esitetytKysymyksetTekstit = {};
 
   final OnDeviceTranslator _translator = OnDeviceTranslator(
-    sourceLanguage: TranslateLanguage.english, // Oletuslähdekieli perinteiselle API:lle
+    sourceLanguage: TranslateLanguage.english,
     targetLanguage: TranslateLanguage.finnish,
   );
-  final OnDeviceTranslatorModelManager _modelManager =
-  OnDeviceTranslatorModelManager();
+  final OnDeviceTranslatorModelManager _modelManager = OnDeviceTranslatorModelManager();
 
   TriviaTarjoaja() {
     _modelManager.downloadModel(TranslateLanguage.english.bcpCode);
@@ -37,6 +35,7 @@ class TriviaTarjoaja with ChangeNotifier {
   bool get onLataus => _onLataus;
   String? get virhe => _virhe;
 
+  /// Hakee kysymykset joko OpenAI:sta tai perinteisestä API:sta
   Future<void> haeKysymykset(
       int maara,
       String vaikeus,
@@ -47,92 +46,79 @@ class TriviaTarjoaja with ChangeNotifier {
     _kysymykset = [];
     _nykyinenIndeksi = 0;
     _pisteet = 0;
-    _esitetytKysymyksetTekstit.clear(); // Nollaa esitetyt uutta peliä varten
+    _esitetytKysymyksetTekstit.clear();
     notifyListeners();
 
     try {
       final asetukset = Provider.of<AsetuksetTarjoaja>(context, listen: false);
       final kaytaOpenAI = asetukset.kaytaOpenAIKysymyksia;
-      final kaytaKaannoksetPerinteiselleAPIlle = asetukset.kaytaKaannokset;
+      final kaytaKaannokset = asetukset.kaytaKaannokset;
       final String valittuAihealue = asetukset.valittuAihealue;
 
-      List<Kysymys> lopullisetKysymyksetPeliin = [];
+      List<Kysymys> lopulliset = [];
 
       if (kaytaOpenAI) {
-        // --- HAE KYSYMYKSET OPENAI:LTA ---
-        List<Kysymys> generoidutOpenAIKysymykset = [];
-        int yrityksetKaikkiaan = 0;
-        const int maksimiYrityksetYhteensa = 25;
+        // --- OpenAI-haara ---
+        List<Kysymys> generoidut = [];
+        int yrityksetYht = 0;
+        const int maksYritykset = 25;
 
-        while (generoidutOpenAIKysymykset.length < maara && yrityksetKaikkiaan < maksimiYrityksetYhteensa) {
-          Kysymys? kysymys;
-          String? kysymysTekstiNormalisoitu;
-          int yrityksetTalleKysymykselle = 0;
-          const int maksimiYrityksetPerKysymys = 3;
+        while (generoidut.length < maara && yrityksetYht < maksYritykset) {
+          Kysymys? kys;
+          String? norm;
+          int perKysYr = 0;
+          const int maksPer = 3;
 
           do {
-            kysymys = await _openAIPalvelu.generoiKysymys(valittuAihealue, vaikeus);
-            kysymysTekstiNormalisoitu = kysymys?.kysymysTeksti.trim().toLowerCase();
-            yrityksetTalleKysymykselle++;
-            yrityksetKaikkiaan++;
+            kys = await _openAIPalvelu.generoiKysymys(valittuAihealue, vaikeus);
+            norm = kys?.kysymysTeksti.trim().toLowerCase();
+            perKysYr++;
+            yrityksetYht++;
 
-            if (kysymysTekstiNormalisoitu != null && _esitetytKysymyksetTekstit.contains(kysymysTekstiNormalisoitu)) {
-              kysymys = null;
-              debugPrint("OpenAI generoi duplikaattikysymyksen, yritetään uudelleen...");
+            if (norm != null && _esitetytKysymyksetTekstit.contains(norm)) {
+              kys = null;
             }
-
-            if (kysymys == null && yrityksetTalleKysymykselle < maksimiYrityksetPerKysymys && yrityksetKaikkiaan < maksimiYrityksetYhteensa) {
+            if (kys == null && perKysYr < maksPer && yrityksetYht < maksYritykset) {
               await Future.delayed(const Duration(milliseconds: 300));
             }
-          } while (kysymys == null && yrityksetTalleKysymykselle < maksimiYrityksetPerKysymys && yrityksetKaikkiaan < maksimiYrityksetYhteensa);
+          } while (kys == null && perKysYr < maksPer && yrityksetYht < maksYritykset);
 
-          if (kysymys != null && kysymysTekstiNormalisoitu != null) {
-            generoidutOpenAIKysymykset.add(kysymys);
-            _esitetytKysymyksetTekstit.add(kysymysTekstiNormalisoitu);
-            if (generoidutOpenAIKysymykset.length < maara && yrityksetKaikkiaan < maksimiYrityksetYhteensa) {
+          if (kys != null && norm != null) {
+            generoidut.add(kys);
+            _esitetytKysymyksetTekstit.add(norm);
+            if (generoidut.length < maara && yrityksetYht < maksYritykset) {
               await Future.delayed(const Duration(milliseconds: 500));
             }
-          } else if (yrityksetTalleKysymykselle >= maksimiYrityksetPerKysymys) {
-            debugPrint("Ei saatu uniikkia OpenAI-kysymystä $maksimiYrityksetPerKysymys yrityksen jälkeen aiheesta '$valittuAihealue'.");
           }
         }
 
-        if (generoidutOpenAIKysymykset.length < maara && generoidutOpenAIKysymykset.isNotEmpty && maara > 0) {
-          _virhe = "OpenAI generoi vain ${generoidutOpenAIKysymykset.length} uniikkia kysymystä pyydetystä $maara:sta aiheesta '$valittuAihealue'.";
-        } else if (generoidutOpenAIKysymykset.isEmpty && maara > 0) {
-          _virhe = "OpenAI ei pystynyt generoimaan yhtään uniikkia kysymystä aiheesta '$valittuAihealue'.";
+        if (generoidut.length < maara) {
+          _virhe = generoidut.isEmpty
+              ? 'OpenAI ei generoitu aineistoa aiheesta "$valittuAihealue".'
+              : 'OpenAI generoi vain ${generoidut.length} kysymystä pyydetyistä $maara.';
         }
-        lopullisetKysymyksetPeliin = generoidutOpenAIKysymykset;
-
-        // tarjoajat/trivia_tarjoaja.dart
-// ... (aiempi koodi, mukaan lukien importit, luokan alku ja if (kaytaOpenAI) -lohko) ...
-
+        lopulliset = generoidut;
       } else {
-        // --- HAE KYSYMYKSET PERINTEISESTÄ API:STA ---
-        List<Kysymys> apiKysymyksetAlkuperaiset = await _triviaApiPalvelu.haeKysymykset(maara, vaikeus);
-        List<Kysymys> kasiteltavatApiKysymykset = [];
-
-        for (var q in apiKysymyksetAlkuperaiset) {
-          if (kasiteltavatApiKysymykset.length >= maara) break; // Estää ylimääräisen työn, jos saatiin jo tarpeeksi
-          final normalisoituTeksti = q.kysymysTeksti.trim().toLowerCase();
-          if (!_esitetytKysymyksetTekstit.contains(normalisoituTeksti)) {
-            kasiteltavatApiKysymykset.add(q);
-            _esitetytKysymyksetTekstit.add(normalisoituTeksti);
+        // --- Perinteinen API-haara ---
+        final int categoryId = _mapAihealueToCategoryId(valittuAihealue);
+        List<Kysymys> alkuper = await _triviaApiPalvelu.haeKysymykset(maara, vaikeus, categoryId);
+        List<Kysymys> kasiteltavat = [];
+        for (var q in alkuper) {
+          if (kasiteltavat.length >= maara) break;
+          final norm = q.kysymysTeksti.trim().toLowerCase();
+          if (!_esitetytKysymyksetTekstit.contains(norm)) {
+            kasiteltavat.add(q);
+            _esitetytKysymyksetTekstit.add(norm);
           }
         }
 
-        if (kasiteltavatApiKysymykset.isEmpty && apiKysymyksetAlkuperaiset.isNotEmpty && maara > 0) {
-          _virhe = "Kaikki perinteisestä API:sta haetut kysymykset olivat duplikaatteja tai niitä ei löytynyt riittävästi.";
-        } else if (kasiteltavatApiKysymykset.isEmpty && maara > 0) { // Tarkistetaan myös, jos maara > 0
-          _virhe = "Perinteinen API ei palauttanut kysymyksiä tai niitä ei ollut riittävästi uniikkeina.";
+        if (kasiteltavat.isEmpty && maara > 0) {
+          _virhe = 'Perinteinen API ei palauttanut riittävästi kysymyksiä.';
         }
 
-
-        // Käännä perinteisen API:n kysymykset, JOS käännökset ovat päällä
-        if (kaytaKaannoksetPerinteiselleAPIlle && _translator.targetLanguage != TranslateLanguage.english) {
-          //await MLKitKaannosValvonta().varmistaMallit();
-          final List<Kysymys> kaannetytKysymyksetListaan = [];
-          for (var q in kasiteltavatApiKysymykset) {
+        if (kaytaKaannokset && _translator.targetLanguage != TranslateLanguage.english) {
+          List<Kysymys> kaannetyt = [];
+          for (var q in kasiteltavat) {
             try {
               final teksti = await _translator.translateText(q.kysymysTeksti);
               final oikea = await _translator.translateText(q.oikeaVastaus);
@@ -140,7 +126,7 @@ class TriviaTarjoaja with ChangeNotifier {
               for (var v in q.vaaratVastaukset) {
                 vaarat.add(await _translator.translateText(v));
               }
-              kaannetytKysymyksetListaan.add(Kysymys(
+              kaannetyt.add(Kysymys(
                 kategoria: q.kategoria,
                 tyyppi: q.tyyppi,
                 vaikeus: q.vaikeus,
@@ -148,42 +134,48 @@ class TriviaTarjoaja with ChangeNotifier {
                 oikeaVastaus: oikea,
                 vaaratVastaukset: vaarat,
               ));
-            } catch (e) {
-              debugPrint("❌ Käännös epäonnistui: ${q.kysymysTeksti} → $e");
-            }
+            } catch (_) {}
           }
-          lopullisetKysymyksetPeliin = kaannetytKysymyksetListaan;
-        }
-        else {
-          // Jos käännöksiä ei ole päällä perinteiselle API:lle (tai kohdekieli on jo englanti), käytä niitä sellaisenaan
-          lopullisetKysymyksetPeliin = kasiteltavatApiKysymykset;
+          lopulliset = kaannetyt;
+        } else {
+          lopulliset = kasiteltavat;
         }
       }
 
-      _kysymykset = lopullisetKysymyksetPeliin;
-
-      // Yleinen tarkistus, jos kysymyslista on tyhjä eikä virhettä ole vielä asetettu
+      _kysymykset = lopulliset;
       if (_kysymykset.isEmpty && _virhe == null && maara > 0) {
-        _virhe = "Kysymyksiä ei löytynyt valituilla asetuksilla.";
+        _virhe = 'Kysymyksiä ei löytynyt valituilla asetuksilla.';
       }
-
     } catch (e) {
+      _virhe = 'Kysymysten haussa virhe: $e';
+      debugPrint('HaeKys kysymysvirhe: $e');
       _kysymykset = [];
-      _virhe = "Kysymysten lataamisessa tapahtui odottamaton virhe: $e";
-      debugPrint("HaeKysymykset virhe: $e");
     } finally {
       _onLataus = false;
       notifyListeners();
     }
   }
 
+  // Karttaa suomenkielisen aihealueen Open Trivia DB:n category-id:hen
+  int _mapAihealueToCategoryId(String aihealue) {
+    switch (aihealue) {
+      case 'yleistieto': return 9;
+      case 'historia': return 23;
+      case 'maantieto': return 22;
+      case 'tiede': return 17;
+      case 'viihde': return 10;
+      case 'elokuvat': return 11;
+      case 'musiikki': return 12;
+      case 'urheilu': return 21;
+      case 'taide ja kirjallisuus': return 25;
+      case 'luonto': return 17;
+      default: return 9;
+    }
+  }
+
   void vastaaKysymykseen(bool oikein) {
     if (_nykyinenIndeksi < _kysymykset.length) {
-      if (oikein) {
-        _pisteet += 20;
-      } else {
-        _pisteet -= 5;
-      }
+      _pisteet += oikein ? 20 : -5;
       notifyListeners();
     }
   }
@@ -200,7 +192,6 @@ class TriviaTarjoaja with ChangeNotifier {
     _pisteet = 0;
     _virhe = null;
     _onLataus = false;
-    // _esitetytKysymyksetTekstit tyhjennetään haeKysymykset-metodin alussa
     notifyListeners();
   }
 
