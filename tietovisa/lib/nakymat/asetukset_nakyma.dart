@@ -56,8 +56,35 @@ class AsetuksetNakyma extends StatelessWidget {
             onChanged: (String? uusiArvo) {
               asetuksetTarjoaja.asetaValittuAihealue(uusiArvo);
             },
-            // Voit lisätä validaattorin tarvittaessa
-            // validator: (value) => value == null ? 'Valitse aihealue' : null,
+          ),
+          const Divider(height: 30),
+
+          // --- Vaikeustason valinta ---
+          const Text(
+            'Vaikeustaso',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<String>(
+            decoration: InputDecoration(
+              labelText: 'Valitse vaikeustaso',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            ),
+            value: asetuksetTarjoaja.valittuVaikeustaso,
+            icon: const Icon(Icons.arrow_drop_down_rounded, color: Colors.deepPurple),
+            isExpanded: true,
+            items: asetuksetTarjoaja.vaikeustasot.map((String taso) {
+              return DropdownMenuItem<String>(
+                value: taso,
+                child: Text(taso),
+              );
+            }).toList(),
+            onChanged: (String? uusiTaso) {
+              asetuksetTarjoaja.asetaValittuVaikeustaso(uusiTaso);
+            },
           ),
           const Divider(height: 30),
 

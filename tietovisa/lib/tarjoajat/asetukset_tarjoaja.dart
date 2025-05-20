@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AsetuksetTarjoaja with ChangeNotifier {
   // Avaimet SharedPreferences varten
   static const String _kaytaOpenAIKey = 'kayta_openai_kysymyksia';
-  static const String _valittuAihealueKey = 'valittu_aihealue'; // UUSI AVAIN
+  static const String _valittuAihealueKey = 'valittu_aihealue';
+  static const String _valittuVaikeustasoKey = 'valittu_vaikeustaso';  // UUSI AVAIN
   static const String _aanetKaytossaKey = 'aanet_kaytossa';
   static const String _aanenVoimakkuusKey = 'aanen_voimakkuus';
   static const String _kaytaSpeechToTextKey = 'kayta_speech_to_text';
@@ -15,7 +16,8 @@ class AsetuksetTarjoaja with ChangeNotifier {
 
   // Tilamuuttujat
   bool _kaytaOpenAIKysymyksia = false;
-  String _valittuAihealue = 'yleistieto'; // UUSI MUUTTUJA, oletusaihe
+  String _valittuAihealue = 'yleistieto';
+  String? _valittuVaikeustaso;            // UUSI MUUTTUJA
   bool _aanetKaytossa = true;
   int _aanenVoimakkuus = 50;
   bool _kaytaSpeechToText = false;
@@ -24,7 +26,6 @@ class AsetuksetTarjoaja with ChangeNotifier {
   bool _kaytaKaannokset = false;
 
   // Lista käytettävissä olevista aihealueista
-  // Voit lisätä tai muokata näitä tarpeen mukaan
   final List<String> saatavillaOlevatAihealueet = [
     'yleistieto',
     'historia',
@@ -38,10 +39,15 @@ class AsetuksetTarjoaja with ChangeNotifier {
     'luonto',
   ];
 
+  // Lista vaikeustasoista
+  final List<String> vaikeustasot = ['Helppo', 'Keskitaso', 'Vaikea']; // UUSI LISTA
+
   // Getterit
   bool get kaytaOpenAIKysymyksia => _kaytaOpenAIKysymyksia;
-  String get valittuAihealue => _valittuAihealue; // UUSI GETTER
-  List<String> get aihealueet => saatavillaOlevatAihealueet; // Getter aihealueille
+  String get valittuAihealue => _valittuAihealue;
+  String? get valittuVaikeustaso => _valittuVaikeustaso;             // UUSI GETTER
+  List<String> get aihealueet => saatavillaOlevatAihealueet;
+  List<String> get kaikkiVaikeustasot => vaikeustasot;               // UUSI GETTER
   bool get aanetKaytossa => _aanetKaytossa;
   int get aanenVoimakkuus => _aanenVoimakkuus;
   bool get kaytaSpeechToText => _kaytaSpeechToText;
@@ -56,7 +62,8 @@ class AsetuksetTarjoaja with ChangeNotifier {
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     _kaytaOpenAIKysymyksia = prefs.getBool(_kaytaOpenAIKey) ?? false;
-    _valittuAihealue = prefs.getString(_valittuAihealueKey) ?? 'yleistieto'; // Ladataan valittu aihealue
+    _valittuAihealue = prefs.getString(_valittuAihealueKey) ?? 'yleistieto';
+    _valittuVaikeustaso = prefs.getString(_valittuVaikeustasoKey) ?? vaikeustasot.first; // Ladataan vaikeustaso
     _aanetKaytossa = prefs.getBool(_aanetKaytossaKey) ?? true;
     _aanenVoimakkuus = prefs.getInt(_aanenVoimakkuusKey) ?? 50;
     _kaytaSpeechToText = prefs.getBool(_kaytaSpeechToTextKey) ?? false;
@@ -75,11 +82,20 @@ class AsetuksetTarjoaja with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> asetaValittuAihealue(String? uusiAihealue) async { // UUSI METODI
+  Future<void> asetaValittuAihealue(String? uusiAihealue) async {
     if (uusiAihealue != null && saatavillaOlevatAihealueet.contains(uusiAihealue)) {
       _valittuAihealue = uusiAihealue;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_valittuAihealueKey, uusiAihealue);
+      notifyListeners();
+    }
+  }
+
+  Future<void> asetaValittuVaikeustaso(String? uusiTaso) async {  // UUSI METODI
+    if (uusiTaso != null && vaikeustasot.contains(uusiTaso)) {
+      _valittuVaikeustaso = uusiTaso;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_valittuVaikeustasoKey, uusiTaso);
       notifyListeners();
     }
   }

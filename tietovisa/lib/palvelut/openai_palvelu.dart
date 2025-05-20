@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // LISÄTTY
 import '../mallit/kysymys.dart';
 
 class OpenAIPalvelu {
-  final String _apiKey = 'Oma koodi'; // MUISTA KÄYTTÄÄ TURVALLISEMPAA TALLENNUSTAPAA API-AVAIMELLE TUOTANNOSSA
+  final String _apiKey = 'Oma avain'; // MUISTA KÄYTTÄÄ TURVALLISEMPAA TALLENNUSTAPAA API-AVAIMELLE TUOTANNOSSA
   final String _apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   // SharedPreferences-avain esitetyille kysymyksille
