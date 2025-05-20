@@ -103,8 +103,15 @@ Palauta vastaus seuraavassa JSON-muodossa:
   "vaarat_vastaukset": ["...", "...", "..."] // Pyydetään 3 väärää vastausta
 }
 ''';
-// Huom! Vähensin vaarat_vastaukset kolmesta kahteen promptissa, jotta se vastaa paremmin yleistä trivia-formaattia
-// ja vähentää hieman tokenien käyttöä. Voit muuttaa takaisin kolmeen, jos haluat.
+    // --- LISÄTTY DEBUG PRINT TÄHÄN ---
+    print('--- OpenAI Pyyntö ---');
+    print('Lähetetään API:lle pyyntö generoida kysymys:');
+    print('Aihe: $aihe');
+    print('Vaikeustaso (parametrina saatu): $vaikeustaso');
+    print('Koko prompt (sellaisena kuin se lähetetään):');
+    print(prompt);
+    print('------------------------');
+    // --- DEBUG PRINT LOPPUU ---
 
     try {
       final response = await http.post(
