@@ -59,7 +59,7 @@ class TriviaTarjoaja with ChangeNotifier {
       List<Kysymys> lopullisetKysymyksetPeliin = [];
 
       if (kaytaOpenAI) {
-        // --- HAE KYSYMYKSET OPENAI:LTA (oletetaan suomeksi) ---
+        // --- HAE KYSYMYKSET OPENAI:LTA ---
         List<Kysymys> generoidutOpenAIKysymykset = [];
         int yrityksetKaikkiaan = 0;
         const int maksimiYrityksetYhteensa = 25;
@@ -129,7 +129,8 @@ class TriviaTarjoaja with ChangeNotifier {
 
 
         // Käännä perinteisen API:n kysymykset, JOS käännökset ovat päällä
-        if (kaytaKaannoksetPerinteiselleAPIlle && _translator.targetLanguage != TranslateLanguage.english && kasiteltavatApiKysymykset.isNotEmpty) {
+        if (kaytaKaannoksetPerinteiselleAPIlle && _translator.targetLanguage != TranslateLanguage.english) {
+          //await MLKitKaannosValvonta().varmistaMallit();
           final List<Kysymys> kaannetytKysymyksetListaan = [];
           for (var q in kasiteltavatApiKysymykset) {
             try {
@@ -148,16 +149,12 @@ class TriviaTarjoaja with ChangeNotifier {
                 vaaratVastaukset: vaarat,
               ));
             } catch (e) {
-              debugPrint("Kysymyksen '${q.kysymysTeksti}' kääntäminen epäonnistui: $e");
-              // Voit päättää, lisätäänkö kääntämätön kysymys vai ohitetaanko se
-              // Tässä esimerkissä se ohitetaan, jotta lista sisältää vain onnistuneesti käännettyjä
+              debugPrint("❌ Käännös epäonnistui: ${q.kysymysTeksti} → $e");
             }
           }
           lopullisetKysymyksetPeliin = kaannetytKysymyksetListaan;
-          if (lopullisetKysymyksetPeliin.isEmpty && kasiteltavatApiKysymykset.isNotEmpty) {
-            _virhe = (_virhe == null ? "" : "$_virhe ") + "Kysymysten kääntäminen epäonnistui kaikille haetuille kysymyksille.";
-          }
-        } else {
+        }
+        else {
           // Jos käännöksiä ei ole päällä perinteiselle API:lle (tai kohdekieli on jo englanti), käytä niitä sellaisenaan
           lopullisetKysymyksetPeliin = kasiteltavatApiKysymykset;
         }
