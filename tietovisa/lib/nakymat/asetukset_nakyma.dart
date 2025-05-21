@@ -10,8 +10,15 @@ class AsetuksetNakyma extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Asetukset'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.grey[800],
+        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        titleTextStyle: const TextStyle(
+          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
+          fontWeight: FontWeight.bold,   // boldattu
+          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+        ),
       ),
       body: Stack(
         children: [
@@ -42,7 +49,7 @@ class AsetuksetNakyma extends StatelessWidget {
                   const SizedBox(height: 10),
                   SwitchListTile(
                     title: const Text(
-                      'Käytä OpenAI:ta kysymysten lähteenä',
+                      'Käytä OpenAI:ta kysymysten lähteenä.',
                       style: TextStyle(color: Colors.white),
                     ),
                     subtitle: const Text(

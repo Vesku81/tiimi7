@@ -92,9 +92,15 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true, // ✅ Keskitetään otsikko AppBarissa
-        title: const Text('Ennätykset'),
-        backgroundColor: Colors.indigo, // ✅ AppBarin taustaväri
+        centerTitle: true,
+        title: const Text('Tulokset'),
+        backgroundColor: Colors.grey[800],
+        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        titleTextStyle: const TextStyle(
+          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
+          fontWeight: FontWeight.bold,   // boldattu
+          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+        ),
       ),
       body: Stack(
         children: [
@@ -113,15 +119,10 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'Peli päättyi!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                const SizedBox(height: 20),
                 if (widget.pisteet != null) // ✅ Näytetään vain, jos peli päättyi
                   Text(
                     '${widget.kayttajaNimi}, sait ${widget.pisteet} pistettä!',
-                    style: const TextStyle(fontSize: 20, color: Colors.white),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 const SizedBox(height: 20),
                 const Text(
@@ -162,6 +163,11 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],   // Taustaväri
+                    foregroundColor: Colors.white, // Tekstin väri
+                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                  ),
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
                       context,

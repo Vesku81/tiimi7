@@ -273,8 +273,14 @@ class PeliNakymaTila extends State<PeliNakyma> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('TriviaVisa'),
-        backgroundColor: Colors.indigo,
+        title: const Text('Tietovisa'),
+        backgroundColor: Colors.grey[800],
+        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        titleTextStyle: const TextStyle(
+          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
+          fontWeight: FontWeight.bold,   // boldattu
+          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+        ),
         actions: [
           Consumer<AsetuksetTarjoaja>(
             builder: (_, aset, __) {
@@ -334,31 +340,45 @@ class PeliNakymaTila extends State<PeliNakyma> {
               return Column(
                 children: [
                   const SizedBox(height: 50),
-                  Text(
-                    'Tervetuloa, ${widget.kayttajaNimi}!',
-                    style: const TextStyle(
-                        fontSize: 22,
+
+                  // Tekstin ympärille 8 pikselin pystysuuntainen padding
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Tervetuloa, ${widget.kayttajaNimi}!',
+                      style: const TextStyle(
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                    textAlign: TextAlign.center,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Kysymys ${triviaTarjoaja.nykyinenIndeksi + 1}/${triviaTarjoaja.kysymykset.length}',
-                    style: const TextStyle(
-                        fontSize: 18,
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Kysymys ${triviaTarjoaja.nykyinenIndeksi + 1}/${triviaTarjoaja.kysymykset.length}',
+                      style: const TextStyle(
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                    textAlign: TextAlign.center,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Aikaa jäljellä: $_aikaJaljella sekuntia',
-                    style: const TextStyle(
-                        fontSize: 18,
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Aikaa jäljellä: $_aikaJaljella sekuntia',
+                      style: const TextStyle(
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.yellow),
-                    textAlign: TextAlign.center,
+                        color: Colors.yellow,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Expanded(
@@ -385,6 +405,11 @@ class PeliNakymaTila extends State<PeliNakyma> {
                               margin: const EdgeInsets.symmetric(
                                   vertical: 8.0),
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[800],   // Taustaväri
+                                  foregroundColor: Colors.white, // Tekstin väri
+                                  textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                                ),
                                 onPressed: kysymykseenVastattu
                                     ? null
                                     : () {
@@ -408,6 +433,11 @@ class PeliNakymaTila extends State<PeliNakyma> {
                           }),
                           // Seuraava-painike
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[800],   // Taustaväri
+                              foregroundColor: Colors.white, // Tekstin väri
+                              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                            ),
                             onPressed: kysymykseenVastattu
                                 ? () {
                               setState(() {

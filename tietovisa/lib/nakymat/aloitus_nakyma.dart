@@ -24,7 +24,13 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Tervetuloa Tietovisaan'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.grey[800],
+        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        titleTextStyle: const TextStyle(
+          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
+          fontWeight: FontWeight.bold,   // boldattu
+          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+        ),
       ),
       drawer: Drawer(
         child: Stack(
@@ -86,7 +92,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
 
                 ListTile(
                   leading: const Icon(Icons.question_answer, color: Colors.white),
-                  title: const Text('Trivia', style: TextStyle(color: Colors.white)),
+                  title: const Text('Tietovisa', style: TextStyle(color: Colors.white)),
                   onTap: () {
                     Navigator.pop(context);
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
@@ -205,7 +211,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                 const Text(
                   'Anna nimesi',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -218,12 +224,17 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Kirjoita nimesi',
-                    hintStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: Colors.white, fontSize: 20),
                   ),
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],   // Taustaväri
+                    foregroundColor: Colors.white, // Tekstin väri
+                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                  ),
                   onPressed: () {
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
