@@ -6,24 +6,26 @@ class AsetuksetTarjoaja with ChangeNotifier {
   // Avaimet SharedPreferences varten
   static const String _kaytaOpenAIKey = 'kayta_openai_kysymyksia';
   static const String _valittuAihealueKey = 'valittu_aihealue';
-  static const String _valittuVaikeustasoKey = 'valittu_vaikeustaso';  // UUSI AVAIN
+  static const String _valittuVaikeustasoKey = 'valittu_vaikeustaso';
   static const String _aanetKaytossaKey = 'aanet_kaytossa';
   static const String _aanenVoimakkuusKey = 'aanen_voimakkuus';
   static const String _kaytaSpeechToTextKey = 'kayta_speech_to_text';
   static const String _ttsRateKey = 'tts_rate';
   static const String _ttsPitchKey = 'tts_pitch';
   static const String _kaytaKaannoksetKey = 'kayta_kaannokset';
+  static const String _kaytaTtsKey = 'kayta_tts'; // UUSI AVAIN
 
   // Tilamuuttujat
   bool _kaytaOpenAIKysymyksia = false;
   String _valittuAihealue = 'yleistieto';
-  String? _valittuVaikeustaso;            // UUSI MUUTTUJA
+  String _valittuVaikeustaso = 'Helppo';
   bool _aanetKaytossa = true;
   int _aanenVoimakkuus = 50;
   bool _kaytaSpeechToText = false;
   double _ttsRate = 0.5;
   double _ttsPitch = 1.0;
   bool _kaytaKaannokset = false;
+  bool _kaytaTts = false; // UUSI MUUTTUJA
 
   // Lista käytettävissä olevista aihealueista
   final List<String> saatavillaOlevatAihealueet = [
@@ -40,20 +42,21 @@ class AsetuksetTarjoaja with ChangeNotifier {
   ];
 
   // Lista vaikeustasoista
-  final List<String> vaikeustasot = ['Helppo', 'Keskitaso', 'Vaikea']; // UUSI LISTA
+  final List<String> vaikeustasot = ['Helppo', 'Keskitaso', 'Vaikea'];
 
   // Getterit
   bool get kaytaOpenAIKysymyksia => _kaytaOpenAIKysymyksia;
   String get valittuAihealue => _valittuAihealue;
-  String? get valittuVaikeustaso => _valittuVaikeustaso;             // UUSI GETTER
+  String get valittuVaikeustaso => _valittuVaikeustaso;
   List<String> get aihealueet => saatavillaOlevatAihealueet;
-  List<String> get kaikkiVaikeustasot => vaikeustasot;               // UUSI GETTER
+  List<String> get kaikkiVaikeustasot => vaikeustasot;
   bool get aanetKaytossa => _aanetKaytossa;
   int get aanenVoimakkuus => _aanenVoimakkuus;
   bool get kaytaSpeechToText => _kaytaSpeechToText;
   double get ttsRate => _ttsRate;
   double get ttsPitch => _ttsPitch;
   bool get kaytaKaannokset => _kaytaKaannokset;
+  bool get kaytaTts => _kaytaTts; // UUSI GETTER
 
   AsetuksetTarjoaja() {
     _load();
@@ -63,13 +66,14 @@ class AsetuksetTarjoaja with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _kaytaOpenAIKysymyksia = prefs.getBool(_kaytaOpenAIKey) ?? false;
     _valittuAihealue = prefs.getString(_valittuAihealueKey) ?? 'yleistieto';
-    _valittuVaikeustaso = prefs.getString(_valittuVaikeustasoKey) ?? vaikeustasot.first; // Ladataan vaikeustaso
+    _valittuVaikeustaso = prefs.getString(_valittuVaikeustasoKey) ?? vaikeustasot.first;
     _aanetKaytossa = prefs.getBool(_aanetKaytossaKey) ?? true;
     _aanenVoimakkuus = prefs.getInt(_aanenVoimakkuusKey) ?? 50;
     _kaytaSpeechToText = prefs.getBool(_kaytaSpeechToTextKey) ?? false;
     _ttsRate = prefs.getDouble(_ttsRateKey) ?? 0.5;
     _ttsPitch = prefs.getDouble(_ttsPitchKey) ?? 1.0;
     _kaytaKaannokset = prefs.getBool(_kaytaKaannoksetKey) ?? false;
+    _kaytaTts = prefs.getBool(_kaytaTtsKey) ?? false;
     notifyListeners();
   }
 
@@ -91,7 +95,7 @@ class AsetuksetTarjoaja with ChangeNotifier {
     }
   }
 
-  Future<void> asetaValittuVaikeustaso(String? uusiTaso) async {  // UUSI METODI
+  Future<void> asetaValittuVaikeustaso(String? uusiTaso) async {
     if (uusiTaso != null && vaikeustasot.contains(uusiTaso)) {
       _valittuVaikeustaso = uusiTaso;
       final prefs = await SharedPreferences.getInstance();
@@ -139,6 +143,13 @@ class AsetuksetTarjoaja with ChangeNotifier {
     _kaytaKaannokset = val;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kaytaKaannoksetKey, val);
+    notifyListeners();
+  }
+
+  Future<void> asetaKaytaTts(bool val) async {
+    _kaytaTts = val;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kaytaTtsKey, val);
     notifyListeners();
   }
 }

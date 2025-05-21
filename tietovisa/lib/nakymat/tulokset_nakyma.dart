@@ -94,7 +94,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
       appBar: AppBar(
         centerTitle: true, // ✅ Keskitetään otsikko AppBarissa
         title: const Text('Ennätykset'),
-        backgroundColor: Colors.deepPurpleAccent, // ✅ AppBarin taustaväri
+        backgroundColor: Colors.indigo, // ✅ AppBarin taustaväri
       ),
       body: Stack(
         children: [
@@ -102,7 +102,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background.jpg'),
+                image: AssetImage('assets/images/tulokset_background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
