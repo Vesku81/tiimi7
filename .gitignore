@@ -134,3 +134,7 @@ ndkBuild/
 *.mode2v3.local.plist.local.plist.local.plist.local
 *.mode1v3.local.plist.local.plist.local.plist.local.lock
 *.mode2v3.local.plist.local.plist.local.plist.local.lock
+tietovisa/android/app/.cxx/Debug/30164544/arm64-v8a/configure_fingerprint.bin
+tietovisa/android/app/.cxx/Debug/30164544/armeabi-v7a/configure_fingerprint.bin
+tietovisa/android/app/.cxx/Debug/30164544/x86/configure_fingerprint.bin
+tietovisa/android/app/.cxx/Debug/30164544/x86_64/configure_fingerprint.bin
