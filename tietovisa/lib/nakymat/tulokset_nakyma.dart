@@ -7,7 +7,7 @@ import 'aloitus_nakyma.dart';                       // Etusivun näkymä
 /// Näyttää pelin lopputuloksen ja historiapistetilaston.
 class TuloksetNakyma extends StatefulWidget {
   final String kayttajaNimi; // Pelaajan nimi
-  final int? pisteet;        // Tämä pelisession pisteet (null jos tulokkaasta valitaan drawerin kautta)
+  final int? pisteet;        // Pelin pisteet (null jos valikkoon tullaan suoraan drawerin kautta)
 
   const TuloksetNakyma({super.key, required this.kayttajaNimi, this.pisteet});
 
@@ -35,7 +35,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
     }
   }
 
-  /// Toistaa voittajan/jääpään ääniraidan riippuen pisteistä.
+  /// Toistaa voiton/häviön ääniraidan riippuen pisteistä.
   Future<void> _soitaTulosaani() async {
     if (widget.pisteet! > 0) {
       await _audioPlayer.play(AssetSource('sounds/victory.mp3'));
@@ -55,7 +55,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
       'pisteet': widget.pisteet,
     }));
 
-    // Tallenna päivitetty lista
+    // Tallennetaan päivitetty lista
     await prefs.setStringList('pistetaulukko', tallennetut);
     _haePisteet();
   }
@@ -74,7 +74,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
       }
     }
 
-    // Suurimmasta pienimpään
+    // Pisteet suurimmasta pienimpään
     haetut.sort((a, b) => b['pisteet'].compareTo(a['pisteet']));
 
     setState(() {
@@ -84,7 +84,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose(); // Vapauta audio-resurssit
+    _audioPlayer.dispose(); // Vapautetaan audio-resurssit
     super.dispose();
   }
 
@@ -115,7 +115,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
             ),
           ),
 
-          // Pääsisältö päälle
+          // Pääsisältö taustakuvan päälle
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(

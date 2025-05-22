@@ -1,4 +1,5 @@
-// Kysymys luokka mallintaa yhden kysymyksen, joka sisältää kysymyksen tekstin, oikean ja väärät vastaukset sekä kysymykseen liittyviä tietoja, kuten kategorian ja vaikeustason.
+// Kysymys luokka mallintaa yhden kysymyksen, joka sisältää kysymyksen tekstin,
+// oikean ja väärät vastaukset sekä kysymykseen liittyviä tietoja, kuten kategorian ja vaikeustason.
 class Kysymys {
   // Kategorian nimi, esim. "Tiede" tai "Historia"
   final String kategoria;
@@ -18,7 +19,7 @@ class Kysymys {
   // Lista vääristä vastauksista
   final List<String> vaaratVastaukset;
 
-  // Konstruktori, jolla luodaan uusi `Kysymys`-olio. Kaikki kentät ovat pakollisia (`required`)
+  // Konstruktori, jolla luodaan uusi `Kysymys`-olio. Kaikki kentät ovat pakollisia.
   Kysymys({
     required this.kategoria,
     required this.tyyppi,

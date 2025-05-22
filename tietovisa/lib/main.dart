@@ -15,12 +15,10 @@ void main() async {
 
   // Luodaan ja ladataan käyttäjän asetukset
   final asetukset = AsetuksetTarjoaja();
-  // Lyhyt viive, jotta asetukset ehtivät latautua (ei kriittinen tuotannossa)
+  // Lyhyt viive, jotta asetukset ehtivät latautua
   await Future.delayed(const Duration(milliseconds: 200));
-
-  // Äänet (TTS/ääniefektit) soitetaan pelin sisällä, ei tässä
-
-  // Sovelluksen käynnistys: alustetaan providerit ja siirrytään TriviaVisaSovellus-widgettiin
+  
+  // Sovelluksen käynnistys, jossa alustetaan providerit ja siirrytään TriviaVisaSovellus-widgettiin
   runApp(
     MultiProvider(
       providers: [
@@ -51,7 +49,7 @@ class _TriviaVisaSovellusState extends State<TriviaVisaSovellus> {
   @override
   void initState() {
     super.initState();
-    // Käynnistetään puheentunnistus (STT) ensimmäisen kehyksen renderöinnin jälkeen
+    // Käynnistetään puheentunnistus ( STT = Speech-to-text ) ensimmäisen kehyksen renderöinnin jälkeen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         // Haetaan providerista puhepalvelu-instanssi

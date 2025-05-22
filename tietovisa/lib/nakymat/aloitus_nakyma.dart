@@ -9,7 +9,7 @@ import 'peli_nakyma.dart';                    // Peli‐näkymä, jossa esitetä
 import 'asetukset_nakyma.dart';               // Asetukset‐näkymä, jossa käyttäjä muokkaa peliasetuksia
 import 'tulokset_nakyma.dart';                // Tulokset‐näkymä, jossa näytetään pistetilasto
 
-/// AloitusNakyma toimii sovelluksen aloitusnäyttönä, johon käyttäjä syöttää nimensä
+/// AloitusNakyma, joka toimii sovelluksen aloitusnäyttönä, mihin käyttäjä syöttää nimensä
 class AloitusNakyma extends StatefulWidget {
   const AloitusNakyma({super.key});
 
@@ -53,7 +53,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
             ListView(
               padding: EdgeInsets.zero,
               children: [
-                // DrawerHeader, tyhjä child mutta taustakuva näkyy
+                // DrawerHeader taustakuva
                 DrawerHeader(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -99,13 +99,13 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
-                // "Tietovisa"-valinta aloittaa pelin
+                // "Tietovisa"-valinta aloittaa pelin ilman nimen syöttöä
                 ListTile(
                   leading: const Icon(Icons.question_answer, color: Colors.white),
                   title: const Text('Tietovisa', style: TextStyle(color: Colors.white)),
                   onTap: () {
                     Navigator.pop(context); // Sulje drawer
-                    // Nollaa pelin tila ja siirry PeliNakyma-sivulle
+                    // Nollaa pelin tilan ja siirtyy peliin
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,
@@ -132,7 +132,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
-                // "Tulokset"-valinta vie tulosnäkymään
+                // "Tulokset"-valinta vie tuloksiin
                 ListTile(
                   leading: const Icon(Icons.score, color: Colors.white),
                   title: const Text('Tulokset', style: TextStyle(color: Colors.white)),
@@ -146,7 +146,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
-                // "Lopeta"-valinta kysyy varmistuksen ja sulkee sovelluksen
+                // "Lopeta"-valinta kysyy varmistuksen pelin lopettamisesta ja sulkee sovelluksen
                 ListTile(
                   leading: const Icon(Icons.exit_to_app, color: Colors.white),
                   title: const Text('Lopeta', style: TextStyle(color: Colors.white)),
@@ -178,7 +178,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
-                // Tekijät nimilista Drawerin alaosassa
+                // Pelin tekijät Drawerin alaosassa
                 const SizedBox(height: 50),
                 const Center(
                   child: Column(
@@ -208,7 +208,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
         ),
       ),
 
-      // Sovelluksen pääbody, jossa taustakuva ja lomake nimen syöttämiseen
+      // Sovelluksen body, jossa taustakuva ja lomake nimen syöttämiseen
       body: Stack(
         children: [
           // Taustakuva
@@ -256,7 +256,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                     textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
-                    // Nollataan pelin tila ja siirrytään peli-näkymään
+                    // Nollataan pelin tila ja siirrytään peliin
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,

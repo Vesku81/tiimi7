@@ -9,7 +9,7 @@ import 'tulokset_nakyma.dart'; // Näkymä pelin tulosten näyttämiseen
 
 // PeliNakyma on StatefulWidget, koska sen sisältö (esim. aika, kysymykset) muuttuu pelin aikana.
 class PeliNakyma extends StatefulWidget {
-  final String kayttajaNimi; // Pelaajan nimi, joka välitetään tälle näkymälle
+  final String kayttajaNimi; // Pelaajan nimi, joka välitetään pelinäkymälle
 
   // Konstruktori, joka vaatii käyttäjänimen.
   const PeliNakyma({super.key, required this.kayttajaNimi});
@@ -28,9 +28,9 @@ class PeliNakymaTila extends State<PeliNakyma> {
   Timer? _timer;
   // Jäljellä oleva aika nykyiselle kysymykselle sekunteina.
   int _aikaJaljella = 20;
-  // Lippu, joka kertoo, onko nykyiseen kysymykseen jo vastattu.
+  // Kertoo, onko nykyiseen kysymykseen jo vastattu.
   bool kysymykseenVastattu = false;
-  // Lippu, joka kertoo, onko puheentunnistus aktiivinen.
+  // Kertoo, onko puheentunnistus aktiivinen.
   bool _isListening = false;
   // Ajastin puheentunnistuksen käynnistämisen viiveelle.
   Timer? _listeningStartTimer;
@@ -38,7 +38,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
   Timer? _microphoneTimer;
   // Jäljellä oleva aika mikrofonin UI:n näytölle.
   int _microphoneTimeLeft = 5;
-  // Lippu, joka kertoo, näytetäänkö mikrofonin UI.
+  // Kertoo, näytetäänkö mikrofonin UI.
   bool _showMicrophoneUI = false;
   // Lista, joka sisältää nykyisen kysymyksen vastausvaihtoehdot sekoitetussa järjestyksessä.
   List<String> _vastaukset = [];
@@ -49,11 +49,9 @@ class PeliNakymaTila extends State<PeliNakyma> {
     // Alustetaan AudioPlayer.
     _audioPlayer = AudioPlayer();
 
-    // Suoritetaan koodi vasta, kun ensimmäinen frame on piirretty.
-    // Tämä on tärkeää, jotta context on varmasti saatavilla Provider-kutsuja varten.
+    // Suoritetaan koodi vasta, kun ensimmäinen frame on piirretty, mikä on tärkeää, jotta context on varmasti saatavilla Provider-kutsuja varten.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Haetaan AsetuksetTarjoaja Providerin avulla. listen: false, koska emme tarvitse
-      // tämän widgetin uudelleenrakentamista asetusten muuttuessa tässä kohtaa.
+      // Haetaan AsetuksetTarjoaja Providerin avulla. listen: false, koska emme tarvitse tämän widgetin uudelleenrakentamista asetusten muuttuessa tässä kohtaa.
       final asetukset = Provider.of<AsetuksetTarjoaja>(context, listen: false);
 
       // Soitetaan taustamusiikki, jos se on asetuksissa päällä.
@@ -67,8 +65,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
         if (!available) debugPrint('Speech-to-Text ei ole saatavilla');
       });
 
-      // Haetaan kysymykset käyttäjän valitsemalla vaikeustasolla.
-      // Luetaan käyttäjän valitsema vaikeustaso asetuksista (esim. "Helppo").
+      // Haetaan kysymykset käyttäjän valitsemalla vaikeustasolla ja luetaan käyttäjän valitsema vaikeustaso asetuksista (esim. "Helppo").
       // Jos arvoa ei ole (esim. ensimmäinen käynnistys), käytetään oletuksena 'Helppo'.
       final String valittu = asetukset.valittuVaikeustaso ?? 'Helppo';
       String apiTaso; // Muuttuja API:lle sopivalle vaikeustasolle (esim. "easy").
@@ -85,8 +82,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
           apiTaso = 'easy';
       }
 
-      // Haetaan kysymykset TriviaTarjoajalta käyttäen valittua API-tasoa.
-      // Tässä oletetaan, että halutaan 5 kysymystä.
+      // Haetaan kysymykset TriviaTarjoajalta käyttäen valittua API-tasoa. Oletetaan, että halutaan 5 kysymystä.
       Provider.of<TriviaTarjoaja>(context, listen: false)
           .haeKysymykset(5, apiTaso, context)
           .then((_) async {
@@ -156,8 +152,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
     });
   }
 
-  // Metodi puheentunnistuksen käynnistämiseen pienen viiveen jälkeen.
-  // Viive on tässä 0 sekuntia, eli käynnistyy heti, jos ehdot täyttyvät.
+  // Metodi puheentunnistuksen käynnistämiseen pienen viiveen jälkeen. Viive on tässä 0 sekuntia, eli käynnistyy heti, jos ehdot täyttyvät.
   void _startListeningWithDelay() {
     final asetukset = Provider.of<AsetuksetTarjoaja>(context, listen: false);
     // Tarkistetaan, onko STT (Speech-to-Text) käytössä asetuksissa,
@@ -267,8 +262,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
     final oikea = kys.oikeaVastaus.toLowerCase(); // Nykyisen kysymyksen oikea vastaus pieniksi kirjaimiksi.
 
     bool oikein = input == oikea; // Tarkistetaan, onko tunnistettu vastaus suoraan oikea.
-    // Jos ei ollut suora osuma, tarkistetaan, vastaako tunnistettu teksti jotain
-    // sekoitetuista vastausvaihtoehdoista (ja onko se nimenomaan oikea vastaus).
+    // Jos ei ollut suoraan oikea vastaus, niin tarkistetaan, että vastaako tunnistettu teksti jotain vastausvaihtoehdoista (ja onko se nimenomaan oikea vastaus).
     if (!oikein) {
       // Käydään läpi näytöllä olevat vastausvaihtoehdot.
       for (var v in _vastaukset) {
@@ -314,8 +308,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
     _timer?.cancel(); // Pysäytetään aikalaskuri.
     _stopListening(); // Pysäytetään puheentunnistus.
     _hideMicrophoneUI(); // Piilotetaan mikrofonin UI.
-    // Korvataan nykyinen näkymä TuloksetNakyma-widgetillä.
-    // Tämä estää käyttäjää palaamasta takaisin pelinäkymään.
+    // Korvataan nykyinen näkymä TuloksetNakyma-widgetillä, mikä  estää käyttäjää palaamasta takaisin pelinäkymään.
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -353,7 +346,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
           fontSize: 24,
         ),
         actions: [
-          // Näytetään mikrofoninappi vain, jos STT on käytössä asetuksissa.
+          // Näytetään mikrofoninappi vain, jos STT ( Speech-to-text ) on käytössä asetuksissa.
           Consumer<AsetuksetTarjoaja>(
             builder: (_, aset, __) {
               if (!aset.kaytaSpeechToText) return const SizedBox(); // Jos STT ei ole käytössä, palautetaan tyhjä widget.
@@ -373,7 +366,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/peli_background.jpg'), // Taustakuvan polku.
+                image: AssetImage('assets/images/peli_background.jpg'), // Taustakuvan kansio.
                 fit: BoxFit.cover, // Skaalataan kuva täyttämään koko alue.
               ),
             ),
@@ -465,7 +458,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
                   const SizedBox(height: 20), // Tyhjää tilaa ennen kysymystekstiä.
                   Expanded( // Käytetään Expanded-widgetiä, jotta kysymys ja vastaukset täyttävät jäljellä olevan tilan.
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0), // Pehmustetta reunoille.
+                      padding: const EdgeInsets.all(16.0), // Paddingia reunoille.
                       child: Column(
                         mainAxisAlignment:
                         MainAxisAlignment.center, // Keskitetään sisältö pystysuunnassa.
@@ -483,7 +476,6 @@ class PeliNakymaTila extends State<PeliNakyma> {
                           ),
                           const SizedBox(height: 20), // Tyhjää tilaa vastausvaihtoehtojen yläpuolella.
                           // Luodaan lista vastausvaihtoehtopainikkeista.
-                          // Käytetään spread-operaattoria (...) listan elementtien lisäämiseksi suoraan children-listaan.
                           ..._vastaukset.map((vastaus) {
                             return Container(
                               margin: const EdgeInsets.symmetric(
@@ -506,7 +498,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
                                   // Ilmoitetaan TriviaTarjoajalle vastauksesta.
                                   triviaTarjoaja
                                       .vastaaKysymykseen(oikein);
-                                  // Päivitetään tila: kysymykseen on vastattu.
+                                  // Päivitetään tila, että kysymykseen on vastattu.
                                   setState(() {
                                     kysymykseenVastattu =
                                     true;
@@ -575,7 +567,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
               );
             },
           ),
-          // Mikrofonin käyttöliittymäelementti, näytetään ehdollisesti.
+          // Mikrofonin käyttöliittymäelementti, joka näytetään ehdollisesti.
           if (_showMicrophoneUI)
             Positioned( // Asetellaan UI näytön alareunaan keskelle.
               bottom: 20,
@@ -583,7 +575,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
               right: 0,
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.all(12.0), // Pehmustetta sisällölle.
+                  padding: const EdgeInsets.all(12.0), // Paddingia sisällölle.
                   decoration: BoxDecoration(
                     color: Colors.black54, // Puoliläpinäkyvä musta tausta.
                     borderRadius:

@@ -40,9 +40,7 @@ class AsetuksetNakyma extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: [
 
-                  // --------------------------
                   // KYSYMYSTEN ASETUKSET -osio
-                  // --------------------------
 
                   const Text(
                     'Kysymysten Asetukset',
@@ -55,7 +53,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Kytkin: käytetäänkö OpenAI-rajapintaa
+                  // Liukukytkin OpenAI-rajapinnan käytön valinnalle
                   SwitchListTile(
                     title: const Text(
                       'Käytä OpenAI:ta kysymysten lähteenä.',
@@ -106,9 +104,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --------------------------
                   // VAIKEUSTASON ASETUKSET -osio
-                  // --------------------------
 
                   const Text(
                     'Vaikeustaso',
@@ -152,9 +148,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --------------------------
                   // ÄÄNIASETUKSET -osio
-                  // --------------------------
 
                   const Text(
                     'Ääniasetukset',
@@ -167,7 +161,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Kytkin: taustamusiikki päällä/pois
+                  // Likukytkin taustamusiikille, onko taustamusiikki päällä/pois
                   SwitchListTile(
                     title: const Text('Äänet käytössä', style: TextStyle(color: Colors.white)),
                     value: tarjoaja.aanetKaytossa,
@@ -177,7 +171,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Kytkin: puheentunnistus päälle/pois
+                  // Liukukytkin puheentunnistukselle, onko puheentunnistus päällä/pois
                   SwitchListTile(
                     title: const Text('Vastaa puhumalla (STT)', style: TextStyle(color: Colors.white)),
                     value: tarjoaja.kaytaSpeechToText,
@@ -185,11 +179,11 @@ class AsetuksetNakyma extends StatelessWidget {
                     activeColor: Colors.deepPurple,
                   ),
 
-                  // Jos puheentunnistus päällä, näytetään TTS-säätimet
+                  // Jos puheentunnistus on kytketty päälle, näytetään TTS-säätimet ( Text-to-speech )
                   if (tarjoaja.kaytaSpeechToText) ...[
                     const SizedBox(height: 20),
 
-                    // Puheäänen nopeus
+                    // Puheäänen nopeuuden säätäminen liukukytkimen avulla hidas/nopea
                     const Text('Puhenopeus (TTS)', style: TextStyle(color: Colors.white)),
                     Slider(
                       min: 0.1,
@@ -203,7 +197,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
-                    // Puheäänen sävy
+                    // Puheäänen sävyn säätäminen liukukytkimen avulla matala/kimeä
                     const Text('Puheen korkeus (TTS)', style: TextStyle(color: Colors.white)),
                     Slider(
                       min: 0.5,
@@ -216,9 +210,7 @@ class AsetuksetNakyma extends StatelessWidget {
                     ),
                   ],
 
-                  // --------------------------
                   // TTS-KYSYMYKSIEN LUKU -osio
-                  // --------------------------
 
                   SwitchListTile(
                     title: const Text('Lue kysymykset ääneen', style: TextStyle(color: Colors.white)),
@@ -233,9 +225,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --------------------------
                   // KÄÄNNÖSASETUKSET -osio
-                  // --------------------------
 
                   const Text(
                     'Kieliasetukset',
@@ -248,7 +238,7 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Kytkin: käännä kysymykset suomeksi
+                  // Liukukytkin, jolla voidaan laittaa Suomenkieliset kysymysten käännökset päälle/pois päältä. PERUS-API ( OpenTrivia Database )
                   SwitchListTile(
                     title: const Text('Käännä kysymykset suomeksi', style: TextStyle(color: Colors.white)),
                     subtitle: const Text(
