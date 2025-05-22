@@ -74,7 +74,7 @@ flutter:
     #   - images/a_dot_ham.jpeg
     # Lisätty äänitiedostot
     - assets/sounds/
-    - assets/sounds/application_start.mp3
+    # - assets/sounds/application_start.mp3
     - assets/sounds/victory.mp3
     - assets/sounds/youlose.mp3
     - assets/sounds/background_music.mp3
