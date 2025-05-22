@@ -1,10 +1,9 @@
-// Tuodaan tarvittavat paketit.
-import 'package:speech_to_text/speech_to_text.dart'; // Puheentunnistukseen (Speech-to-Text, STT).
+import 'package:speech_to_text/speech_to_text.dart'; // Puheentunnistus (Speech-to-Text, STT).
 import 'package:speech_to_text/speech_recognition_result.dart'; // STT:n tulosobjekti.
 import 'package:speech_to_text/speech_recognition_error.dart'; // STT:n virheobjekti.
-import 'package:flutter_tts/flutter_tts.dart'; // Puhesynteesiin (Text-to-Speech, TTS).
-import 'package:flutter/material.dart'; // Flutterin peruswidgetit ja työkalut (esim. debugPrint).
-import 'package:permission_handler/permission_handler.dart'; // Käyttöoikeuksien hallintaan (esim. mikrofoni).
+import 'package:flutter_tts/flutter_tts.dart'; // Puhesynteesi (Text-to-Speech, TTS).
+import 'package:flutter/material.dart'; // Flutterin peruswidgetit ja työkalut
+import 'package:permission_handler/permission_handler.dart'; // Käyttöoikeuksien hallintaan (mm. mikrofoni).
 
 /// Palvelu, joka huolehtii puheentunnistuksesta (STT) ja puheen synteesistä (TTS).
 /// Tämä luokka kapseloi STT- ja TTS-toiminnallisuudet yhteen paikkaan,
@@ -21,10 +20,9 @@ class Puhepalvelu {
   bool _isListening = false;
 
   /// Getter: Palauttaa true, jos puheentunnistus on alustettu ja käytettävissä.
-  /// Muualta koodista voidaan tarkistaa tämä ennen STT-toimintojen kutsumista.
-  bool get isInitialized => _speechEnabled;
+    bool get isInitialized => _speechEnabled;
 
-  /// Getter: Palauttaa true, jos puheentunnistus on tällä hetkellä käynnissä (kuuntelee).
+  /// Getter: Palauttaa true, jos puheentunnistus on käynnissä (kuuntelee).
   bool get isListening => _isListening;
 
   /// Alustaa puheentunnistuksen.
@@ -37,8 +35,7 @@ class Puhepalvelu {
     if (status.isDenied) {
       status = await Permission.microphone.request();
     }
-    // Jos oikeutta ei vieläkään myönnetty (esim. käyttäjä kielsi),
-    // tulostetaan virheilmoitus ja palautetaan false.
+    // Jos oikeutta ei vieläkään myönnetty, tulostetaan virheilmoitus ja palautetaan false.
     if (!status.isGranted) {
       debugPrint('Mikrofonin käyttöoikeus evätty. Puheentunnistus ei käytössä.');
       _speechEnabled = false; // Merkitään, ettei STT ole käytettävissä.

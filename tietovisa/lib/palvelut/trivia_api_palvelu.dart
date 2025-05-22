@@ -5,6 +5,14 @@ import 'package:html_unescape/html_unescape.dart'; // HTML-entiteettien purkamis
 import '../mallit/kysymys.dart'; // Kysymys-malliluokan tuonti
 import 'package:tietovisa/utils/vakiot.dart'; // API-perus URL:n tuonti
 
+<<<<<<< Updated upstream
+=======
+/// Tämä palvelu hakee kysymyksiä Open Trivia DB -rajapinnasta.
+/// Parametrina annetaan:
+/// - `maara`       : montako kysymystä halutaan
+/// - `vaikeus`     : "easy", "medium" tai "hard"
+/// - `categoryId`  : numeraalinen tunniste aihealueelle
+>>>>>>> Stashed changes
 class TriviaApiPalvelu {
   // Funktio, joka hakee kysymyksiä Trivia API:sta parametrien perusteella, esim. "määrä", "vaikeustaso" (helppo/easy, keskitaso/medium tai vaikea/hard).
   Future<List<Kysymys>> haeKysymykset(int maara, String vaikeus, int categoryId) async {
@@ -23,6 +31,7 @@ class TriviaApiPalvelu {
         if (data['response_code'] == 0) {
           final unescape = HtmlUnescape(); // Luodaan instanssi HTML-entiteettien purkamiseen
 
+<<<<<<< Updated upstream
           // Käydään API rajapinnan palauttama data läpi ja muunnetaan se Kysymys-olioiksi
           List<Kysymys> kysymykset = (data['results'] as List)
               .map((json) => Kysymys(
@@ -38,6 +47,19 @@ class TriviaApiPalvelu {
                 .map((vastaus) => unescape.convert(
                 vastaus)) // Purkaa kaikki väärät vastaukset
                 .toList(),
+=======
+          // 6) Muunnetaan jokainen tulos JSONista Kysymys-olioksi
+          return (data['results'] as List)
+              .map((jsonRaw) => Kysymys(
+            kategoria: unescape.convert(jsonRaw['category']),         // puretaan HTML-entiteetit
+            tyyppi: jsonRaw['type'],                                  // monivalinta tms.
+            vaikeus: jsonRaw['difficulty'],                           // vaikeustaso
+            kysymysTeksti: unescape.convert(jsonRaw['question']),     // kysymysteksti
+            oikeaVastaus: unescape.convert(jsonRaw['correct_answer']),
+            vaaratVastaukset: (jsonRaw['incorrect_answers'] as List)
+                .map((ans) => unescape.convert(ans.toString()))
+                .toList(),                                            // väärät vaihtoehdot
+>>>>>>> Stashed changes
           ))
               .toList();
 
