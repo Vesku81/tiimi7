@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import '../mallit/kysymys.dart';
-
 // Tuodaan tarvittavat paketit.
 import 'dart:convert'; // JSON-koodaukseen ja -dekoodaukseen.
 import 'package:http/http.dart' as http; // HTTP-pyyntöjen tekemiseen.
