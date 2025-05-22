@@ -1,15 +1,13 @@
-<<<<<<< Updated upstream
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../mallit/kysymys.dart';
-=======
+
 // Tuodaan tarvittavat paketit.
 import 'dart:convert'; // JSON-koodaukseen ja -dekoodaukseen.
 import 'package:http/http.dart' as http; // HTTP-pyyntöjen tekemiseen.
 import 'package:shared_preferences/shared_preferences.dart'; // Paikalliseen tallennukseen.
 import '../mallit/kysymys.dart'; // Kysymys-datamalli.
->>>>>>> Stashed changes
 
 /// Palveluluokka OpenAI API:n kanssa kommunikointiin trivia-kysymysten generoimiseksi.
 /// Tämä versio käyttää sekä normalisoituja kysymyksiä että "semanttisia hasheja"
