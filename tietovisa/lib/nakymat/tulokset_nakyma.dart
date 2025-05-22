@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart'; // Flutterin peruswidgetit ja tyylit
-import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences tietojen tallennukseen
-import 'package:audioplayers/audioplayers.dart'; // Audioplayer ääniä varten
-import 'dart:convert'; // JSON-tietojen käsittely
-import 'aloitus_nakyma.dart'; // Etusivun näkymä
+import 'package:flutter/material.dart';              // Flutterin peruswidgetit ja tyylit
+import 'package:shared_preferences/shared_preferences.dart'; // Tallennettujen pistetietojen käsittelyyn
+import 'package:audioplayers/audioplayers.dart';    // Äänien toistamiseen
+import 'dart:convert';                              // JSON-muotoisten merkkijonojen käsittely
+import 'aloitus_nakyma.dart';                       // Etusivun näkymä
 
-// Tuloksetnakyma vastaa tulosten ja pistetaulukon näyttämisestä
+/// Näyttää pelin lopputuloksen ja historiapistetilaston.
 class TuloksetNakyma extends StatefulWidget {
-  final String kayttajaNimi; // Käyttäjän nimi
-  final int? pisteet; // Käyttäjän keräämät pisteet (voi olla null, jos tullaan Drawerista)
+  final String kayttajaNimi; // Pelaajan nimi
+  final int? pisteet;        // Tämä pelisession pisteet (null jos tulokkaasta valitaan drawerin kautta)
 
   const TuloksetNakyma({super.key, required this.kayttajaNimi, this.pisteet});
 
@@ -15,96 +15,97 @@ class TuloksetNakyma extends StatefulWidget {
   State<TuloksetNakyma> createState() => _TuloksetNakymaTila();
 }
 
-// _Tuloksetnakymatila vastaa näkymän tilanhallinnasta
+/// Hallinnoi pistetietojen latausta, äänien soittamista ja listan näyttämistä.
 class _TuloksetNakymaTila extends State<TuloksetNakyma> {
-  List<Map<String, dynamic>> pistetaulukko = []; // Lista tallennetuista pisteistä
-  late AudioPlayer _audioPlayer; // AudioPlayerin alustaminen ääniä varten
+  List<Map<String, dynamic>> pistetaulukko = []; // Koko pelihistorian pistetiedot
+  late AudioPlayer _audioPlayer;                // Äänen toistoon
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer(); // Luodaan uusi AudioPlayer instanssi
+    _audioPlayer = AudioPlayer();
 
-    // ✅ Soitetaan ääni VAIN jos peli on juuri päättynyt
+    // Jos tulokset saatiin suoraan pelistä (ei drawerista), soita ääni ja tallenna uusi tulos
     if (widget.pisteet != null) {
-      _soitaTulosaani(); // Soitetaan tulosääni pelin päättyessä
-      _tallennaJaHaePisteet(); // Tallennetaan ja haetaan pistetiedot
+      _soitaTulosaani();
+      _tallennaJaHaePisteet();
     } else {
-      _haePisteet(); // Haetaan vain pisteet, jos tullaan Drawerista
+      // Jos tuloksia selataan myöhemmin drawerista, hae vain jo tallennetut pistetiedot
+      _haePisteet();
     }
   }
 
-  // ✅ Funktio äänen toistamiseen vain pelin päätteeksi
+  /// Toistaa voittajan/jääpään ääniraidan riippuen pisteistä.
   Future<void> _soitaTulosaani() async {
     if (widget.pisteet! > 0) {
-      await _audioPlayer.play(AssetSource('sounds/victory.mp3')); // ✅ Voittoääni
+      await _audioPlayer.play(AssetSource('sounds/victory.mp3'));
     } else {
-      await _audioPlayer.play(AssetSource('sounds/youlose.mp3')); // ✅ Häviöääni
+      await _audioPlayer.play(AssetSource('sounds/youlose.mp3'));
     }
   }
 
-  // ✅ Tallennetaan ja haetaan pistetiedot vain, jos peli on päättynyt
+  /// Lisää tämän session pisteet SharedPreferencesiin ja hakee päivitetyn listan.
   Future<void> _tallennaJaHaePisteet() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> tallennetutPisteet = prefs.getStringList('pistetaulukko') ?? [];
+    final tallennetut = prefs.getStringList('pistetaulukko') ?? [];
 
-    // ✅ Lisätään nykyisen pelin tulos vain, jos peli on päättynyt
-    tallennetutPisteet.add(jsonEncode({
+    // Lisää uusi tulos JSONina listalle
+    tallennetut.add(jsonEncode({
       'nimi': widget.kayttajaNimi,
       'pisteet': widget.pisteet,
     }));
 
-    // ✅ Päivitetään tallennetut tulokset
-    await prefs.setStringList('pistetaulukko', tallennetutPisteet);
-
-    _haePisteet(); // ✅ Haetaan päivitetyt pisteet
+    // Tallenna päivitetty lista
+    await prefs.setStringList('pistetaulukko', tallennetut);
+    _haePisteet();
   }
 
-  // ✅ Hakee pisteet ilman tallennusta (jos tullaan Drawerista)
+  /// Lataa ja lajittelee tallennetut pistetiedot ilman uuden tuloksen tallennusta.
   Future<void> _haePisteet() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> tallennetutPisteet = prefs.getStringList('pistetaulukko') ?? [];
+    final tallennetut = prefs.getStringList('pistetaulukko') ?? [];
 
-    List<Map<String, dynamic>> haetutPisteet = [];
-    for (String piste in tallennetutPisteet) {
+    final haetut = <Map<String, dynamic>>[];
+    for (var s in tallennetut) {
       try {
-        final data = jsonDecode(piste) as Map<String, dynamic>;
-        haetutPisteet.add(data);
+        haetut.add(jsonDecode(s) as Map<String, dynamic>);
       } catch (e) {
-        print("Virhe tietojen käsittelyssä: $e");
+        debugPrint("Virhe datan jäsentämisessä: $e");
       }
     }
 
-    haetutPisteet.sort((a, b) => b['pisteet'].compareTo(a['pisteet']));
+    // Suurimmasta pienimpään
+    haetut.sort((a, b) => b['pisteet'].compareTo(a['pisteet']));
 
     setState(() {
-      pistetaulukko = haetutPisteet;
+      pistetaulukko = haetut;
     });
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose(); // ✅ Vapautetaan AudioPlayerin resurssit
+    _audioPlayer.dispose(); // Vapauta audio-resurssit
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ylävalikko
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Tulokset'),
         backgroundColor: Colors.grey[800],
-        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        foregroundColor: Colors.white,
         titleTextStyle: const TextStyle(
-          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
-          fontWeight: FontWeight.bold,   // boldattu
-          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
         ),
       ),
       body: Stack(
         children: [
-          // ✅ Taustakuva
+          // Taustakuva koko näkymälle
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -113,23 +114,34 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
               ),
             ),
           ),
-          // ✅ Pääsisältö
+
+          // Pääsisältö päälle
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (widget.pisteet != null) // ✅ Näytetään vain, jos peli päättyi
+
+                // Näytä tämän session pistetulos, jos peli päättyi juuri
+                if (widget.pisteet != null)
                   Text(
                     '${widget.kayttajaNimi}, sait ${widget.pisteet} pistettä!',
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white
+                    ),
                   ),
+
                 const SizedBox(height: 20),
+
+                // Otsikko pistetaulukolle
                 const Text(
                   'Pistetaulukko',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
+
                 const SizedBox(height: 10),
+
+                // Lista tallennetuista tuloksista
                 Expanded(
                   child: pistetaulukko.isEmpty
                       ? const Center(
@@ -141,6 +153,7 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
                       : ListView.builder(
                     itemCount: pistetaulukko.length,
                     itemBuilder: (context, index) {
+                      final entry = pistetaulukko[index];
                       return Card(
                         color: Colors.white.withOpacity(0.8),
                         child: ListTile(
@@ -148,12 +161,9 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
                             '${index + 1}.',
                             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                          title: Text(
-                            pistetaulukko[index]['nimi'],
-                            style: const TextStyle(fontSize: 18),
-                          ),
+                          title: Text(entry['nimi'], style: const TextStyle(fontSize: 18)),
                           trailing: Text(
-                            '${pistetaulukko[index]['pisteet']} pistettä',
+                            '${entry['pisteet']} pistettä',
                             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -161,12 +171,15 @@ class _TuloksetNakymaTila extends State<TuloksetNakyma> {
                     },
                   ),
                 ),
+
                 const SizedBox(height: 20),
+
+                // Paluu etusivulle -painike
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[800],   // Taustaväri
-                    foregroundColor: Colors.white, // Tekstin väri
-                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                    backgroundColor: Colors.grey[800],
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(

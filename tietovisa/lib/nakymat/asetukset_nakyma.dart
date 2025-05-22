@@ -1,28 +1,31 @@
 // nakymat/asetukset_nakyma.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../tarjoajat/asetukset_tarjoaja.dart';
 
+/// Näyttö, jossa käyttäjä voi säätää pelin asetuksia.
 class AsetuksetNakyma extends StatelessWidget {
   const AsetuksetNakyma({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Yläreunan AppBar, jossa ruudun otsikko
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Asetukset'),
         backgroundColor: Colors.grey[800],
-        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        foregroundColor: Colors.white,   // Tekstin ja ikonien väri
         titleTextStyle: const TextStyle(
-          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
-          fontWeight: FontWeight.bold,   // boldattu
-          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+          color: Colors.white,           // Fontin väri
+          fontWeight: FontWeight.bold,   // Lihavointi
+          fontSize: 24,                  // Fonttikoko
         ),
       ),
       body: Stack(
         children: [
-          // Taustakuva
+          // Taustakuva koko ruudulle
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -31,13 +34,18 @@ class AsetuksetNakyma extends StatelessWidget {
               ),
             ),
           ),
-          // Asetukset-sisältö
+
+          // Pääsisältö pinottuna taustakuvan päälle
           Consumer<AsetuksetTarjoaja>(
             builder: (context, tarjoaja, child) {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // --- Kysymysten Asetukset ---
+
+                  // --------------------------
+                  // KYSYMYSTEN ASETUKSET -osio
+                  // --------------------------
+
                   const Text(
                     'Kysymysten Asetukset',
                     style: TextStyle(
@@ -46,7 +54,10 @@ class AsetuksetNakyma extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Kytkin: käytetäänkö OpenAI-rajapintaa
                   SwitchListTile(
                     title: const Text(
                       'Käytä OpenAI:ta kysymysten lähteenä.',
@@ -60,7 +71,10 @@ class AsetuksetNakyma extends StatelessWidget {
                     onChanged: (val) => tarjoaja.asetaKaytaOpenAI(val),
                     activeColor: Colors.deepPurple,
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Pudotusvalikko aihealueiden valintaan
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: 'Valitse aihealue',
@@ -83,6 +97,7 @@ class AsetuksetNakyma extends StatelessWidget {
                       return DropdownMenuItem(
                         value: aihe,
                         child: Text(
+                          // Ensimmäinen kirjain isolla
                           aihe[0].toUpperCase() + aihe.substring(1),
                           style: const TextStyle(color: Colors.white),
                         ),
@@ -90,9 +105,13 @@ class AsetuksetNakyma extends StatelessWidget {
                     }).toList(),
                     onChanged: (uusi) => tarjoaja.asetaValittuAihealue(uusi),
                   ),
+
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --- Vaikeustaso ---
+                  // --------------------------
+                  // VAIKEUSTASON ASETUKSET -osio
+                  // --------------------------
+
                   const Text(
                     'Vaikeustaso',
                     style: TextStyle(
@@ -101,7 +120,10 @@ class AsetuksetNakyma extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Pudotusvalikko vaikeustason valintaan
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: 'Valitse vaikeustaso',
@@ -117,6 +139,7 @@ class AsetuksetNakyma extends StatelessWidget {
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     dropdownColor: Colors.deepPurple,
+                    // Oletuksena ensimmäinen taso jos null
                     value: tarjoaja.valittuVaikeustaso ?? tarjoaja.kaikkiVaikeustasot.first,
                     icon: const Icon(Icons.arrow_drop_down_rounded, color: Colors.white),
                     isExpanded: true,
@@ -128,9 +151,13 @@ class AsetuksetNakyma extends StatelessWidget {
                     }).toList(),
                     onChanged: (uusi) => tarjoaja.asetaValittuVaikeustaso(uusi),
                   ),
+
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --- Ääniasetukset ---
+                  // --------------------------
+                  // ÄÄNIASETUKSET -osio
+                  // --------------------------
+
                   const Text(
                     'Ääniasetukset',
                     style: TextStyle(
@@ -139,22 +166,32 @@ class AsetuksetNakyma extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Kytkin: taustamusiikki päällä/pois
                   SwitchListTile(
                     title: const Text('Äänet käytössä', style: TextStyle(color: Colors.white)),
                     value: tarjoaja.aanetKaytossa,
                     onChanged: (val) => tarjoaja.asetaAanetKaytossa(val),
                     activeColor: Colors.deepPurple,
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Kytkin: puheentunnistus päälle/pois
                   SwitchListTile(
                     title: const Text('Vastaa puhumalla (STT)', style: TextStyle(color: Colors.white)),
                     value: tarjoaja.kaytaSpeechToText,
                     onChanged: (val) => tarjoaja.asetaKaytaSpeechToText(val),
                     activeColor: Colors.deepPurple,
                   ),
+
+                  // Jos puheentunnistus päällä, näytetään TTS-säätimet
                   if (tarjoaja.kaytaSpeechToText) ...[
                     const SizedBox(height: 20),
+
+                    // Puheäänen nopeus
                     const Text('Puhenopeus (TTS)', style: TextStyle(color: Colors.white)),
                     Slider(
                       min: 0.1,
@@ -165,7 +202,10 @@ class AsetuksetNakyma extends StatelessWidget {
                       label: tarjoaja.ttsRate.toStringAsFixed(1),
                       activeColor: Colors.deepPurple,
                     ),
+
                     const SizedBox(height: 10),
+
+                    // Puheäänen sävy
                     const Text('Puheen korkeus (TTS)', style: TextStyle(color: Colors.white)),
                     Slider(
                       min: 0.5,
@@ -178,10 +218,16 @@ class AsetuksetNakyma extends StatelessWidget {
                     ),
                   ],
 
-                  // --- Lue kysymykset ääneen ---
+                  // --------------------------
+                  // TTS-KYSYMYKSIEN LUKU -osio
+                  // --------------------------
+
                   SwitchListTile(
                     title: const Text('Lue kysymykset ääneen', style: TextStyle(color: Colors.white)),
-                    subtitle: const Text('Käyttää tekstistä puheeksi -toimintoa kysymyksille.', style: TextStyle(color: Colors.white70)),
+                    subtitle: const Text(
+                      'Käyttää tekstistä puheeksi -toimintoa kysymyksille.',
+                      style: TextStyle(color: Colors.white70),
+                    ),
                     value: tarjoaja.kaytaTts,
                     onChanged: (val) => tarjoaja.asetaKaytaTts(val),
                     activeColor: Colors.deepPurple,
@@ -189,7 +235,10 @@ class AsetuksetNakyma extends StatelessWidget {
 
                   const Divider(height: 30, color: Colors.white54),
 
-                  // --- Käännösasetukset ---
+                  // --------------------------
+                  // KÄÄNNÖSASETUKSET -osio
+                  // --------------------------
+
                   const Text(
                     'Kieliasetukset',
                     style: TextStyle(
@@ -198,14 +247,21 @@ class AsetuksetNakyma extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Kytkin: käännä kysymykset suomeksi
                   SwitchListTile(
                     title: const Text('Käännä kysymykset suomeksi', style: TextStyle(color: Colors.white)),
-                    subtitle: const Text('Käytetään, jos kysymysten lähde on englanninkielinen API.', style: TextStyle(color: Colors.white70)),
+                    subtitle: const Text(
+                      'Käytetään, jos kysymysten lähde on englanninkielinen API.',
+                      style: TextStyle(color: Colors.white70),
+                    ),
                     value: tarjoaja.kaytaKaannokset,
                     onChanged: (val) => tarjoaja.asetaKaytaKaannokset(val),
                     activeColor: Colors.deepPurple,
                   ),
+
                   const SizedBox(height: 20),
                 ],
               );

@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';           // Flutterin peruswidgetit ja tyylit
-import 'package:provider/provider.dart';          // Provider‐kirjasto tilanhallintaan
+// nakymat/aloitus_nakyma.dart
+// Flutterin peruswidgetit ja tyylit
+import 'package:flutter/material.dart';
+// Provider‐kirjasto tilanhallintaan (esim. TriviaTarjoaja, AsetuksetTarjoaja)
+import 'package:provider/provider.dart';
 
-import '../tarjoajat/trivia_tarjoaja.dart';       // Trivia‐pelin tila
-import 'peli_nakyma.dart';                        // Peli‐näkymä
-import 'asetukset_nakyma.dart';                   // Asetukset‐näkymä
-import 'tulokset_nakyma.dart';                    // Tulokset‐näkymä
+// Trivia-pelin logiikka sekä eri näkymät
+import '../tarjoajat/trivia_tarjoaja.dart';   // Pelin tila ja kysymyshaku
+import 'peli_nakyma.dart';                    // Peli‐näkymä, jossa esitetään trivia-kysymykset
+import 'asetukset_nakyma.dart';               // Asetukset‐näkymä, jossa käyttäjä muokkaa peliasetuksia
+import 'tulokset_nakyma.dart';                // Tulokset‐näkymä, jossa näytetään pistetilasto
 
-/// Aloitusnäkymä toimii sovelluksen aloitusnäyttönä
+/// AloitusNakyma toimii sovelluksen aloitusnäyttönä, johon käyttäjä syöttää nimensä
 class AloitusNakyma extends StatefulWidget {
   const AloitusNakyma({super.key});
 
@@ -14,27 +18,31 @@ class AloitusNakyma extends StatefulWidget {
   State<AloitusNakyma> createState() => AloitusNakymaTila();
 }
 
-/// Hallitsee näkymän tilaa, kuten käyttäjän syöttämää nimeä
+/// AloitusNakymaTila hallitsee tekstikentän tilaa ja navigoinnin eri näkymiin
 class AloitusNakymaTila extends State<AloitusNakyma> {
+  // Tekstikentän ohjain nimi-inputille
   final TextEditingController _nimiOhjain = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Sovelluksen ylätunniste
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Tervetuloa Tietovisaan'),
-        backgroundColor: Colors.grey[800],
-        foregroundColor: Colors.white,   // kaikki AppBarin tekstit ja ikonit valkoisiksi
+        backgroundColor: Colors.grey[800],       // Tummanharmaa tausta
+        foregroundColor: Colors.white,          // AppBarin tekstit ja ikonit valkoisiksi
         titleTextStyle: const TextStyle(
-          color: Colors.white,           // otsikon väri (yllä päällekkäin foregrounColorin kanssa)
-          fontWeight: FontWeight.bold,   // boldattu
-          fontSize: 24,                  // haluttu fonttikoko (voit säätää tarpeen mukaan)
+          color: Colors.white,                  // Title-otsikko valkoiseksi
+          fontWeight: FontWeight.bold,          // Boldattu fontti
+          fontSize: 24,                         // Fonttikoko 24
         ),
       ),
+      // Sivupaneeli (Drawer) navigointiin peliin, asetuksiin, tuloksiin jne.
       drawer: Drawer(
         child: Stack(
           children: [
+            // Taustakuva navigaatiopaneelissa
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -46,6 +54,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
             ListView(
               padding: EdgeInsets.zero,
               children: [
+                // DrawerHeader, tyhjä child mutta taustakuva näkyy
                 DrawerHeader(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -53,10 +62,10 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: const SizedBox.shrink(), // tyhjä child, pakollinen
+                  child: const SizedBox.shrink(),
                 ),
 
-                // --- "Tietovisa" yläpuolelle Aloita-painiketta ---
+                // Sovelluksen nimi Drawerissa
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(
@@ -79,6 +88,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   ),
                 ),
 
+                // "Aloita"-valinta vie takaisin aloitusnäkymään
                 ListTile(
                   leading: const Icon(Icons.home, color: Colors.white),
                   title: const Text('Aloita', style: TextStyle(color: Colors.white)),
@@ -90,11 +100,13 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
+                // "Tietovisa"-valinta aloittaa pelin
                 ListTile(
                   leading: const Icon(Icons.question_answer, color: Colors.white),
                   title: const Text('Tietovisa', style: TextStyle(color: Colors.white)),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context); // Sulje drawer
+                    // Nollaa pelin tila ja siirry PeliNakyma-sivulle
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,
@@ -109,6 +121,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
+                // "Asetukset"-valinta vie asetuksiin
                 ListTile(
                   leading: const Icon(Icons.settings, color: Colors.white),
                   title: const Text('Asetukset', style: TextStyle(color: Colors.white)),
@@ -120,6 +133,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
+                // "Tulokset"-valinta vie tulosnäkymään
                 ListTile(
                   leading: const Icon(Icons.score, color: Colors.white),
                   title: const Text('Tulokset', style: TextStyle(color: Colors.white)),
@@ -133,6 +147,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
+                // "Lopeta"-valinta kysyy varmistuksen ja sulkee sovelluksen
                 ListTile(
                   leading: const Icon(Icons.exit_to_app, color: Colors.white),
                   title: const Text('Lopeta', style: TextStyle(color: Colors.white)),
@@ -164,6 +179,7 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                   },
                 ),
 
+                // Tekijät nimilista Drawerin alaosassa
                 const SizedBox(height: 50),
                 const Center(
                   child: Column(
@@ -192,8 +208,11 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
           ],
         ),
       ),
+
+      // Sovelluksen pääbody, jossa taustakuva ja lomake nimen syöttämiseen
       body: Stack(
         children: [
+          // Taustakuva
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -202,6 +221,8 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
               ),
             ),
           ),
+
+          // Keskitetty lomake nimen syöttämiseen
           Padding(
             padding: const EdgeInsets.all(100.0),
             child: Column(
@@ -231,11 +252,12 @@ class AloitusNakymaTila extends State<AloitusNakyma> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[800],   // Taustaväri
-                    foregroundColor: Colors.white, // Tekstin väri
-                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Lisätyylit, esim. bold
+                    backgroundColor: Colors.grey[800],   // Painikkeen taustaväri
+                    foregroundColor: Colors.white,         // Painikkeen tekstin väri
+                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
+                    // Nollataan pelin tila ja siirrytään peli-näkymään
                     Provider.of<TriviaTarjoaja>(context, listen: false).nollaaPeli();
                     Navigator.push(
                       context,

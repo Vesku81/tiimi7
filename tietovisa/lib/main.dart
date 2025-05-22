@@ -1,79 +1,45 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        // main.dart
+// Sovelluksen käynnistys ja providerien asetus
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:audioplayers/audioplayers.dart';
 
-// Kommentoidaan pois, jos ei enää tarvita suoraan tässä tiedostossa
-// import 'package:google_mlkit_translation/google_mlkit_translation.dart';
-
+// Sovelluksenäkymät ja tarjoajat
 import 'nakymat/aloitus_nakyma.dart';
 import 'tarjoajat/trivia_tarjoaja.dart';
 import 'tarjoajat/asetukset_tarjoaja.dart';
 import 'palvelut/puhepalvelu.dart';
 
+/// Pääfunktio, jossa alustetaan Flutter-sitoutuminen ja käynnistetään sovellus
 void main() async {
+  // Varmistetaan, että Flutterin widget-järjestelmä on alustettu
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ladataan asetukset ensin, jotta tiedetään, soitetaanko käynnistysääni
+  // Luodaan ja ladataan käyttäjän asetukset
   final asetukset = AsetuksetTarjoaja();
-  // Varmistetaan, että asetukset ladataan ennen kuin niitä käytetään.
-  // AsetuksetTarjoajan konstruktori kutsuu _load(), joka on async.
-  // Yksinkertainen odotus tai parempi tapa olisi käyttää FutureBuilderia tai vastaavaa
-  // sovelluksen käynnistyksessä, jos käynnistysääni on kriittinen.
-  // Tässä oletetaan, että _load() ehtii suorittua tai että oletusarvo on ok.
-  // Parempi tapa olisi odottaa _load() valmistumista, jos se on mahdollista.
-  // Esimerkiksi:
-  // await asetukset._load(); // Jos _load() olisi julkinen tai kutsuttaisiin toisin.
-  // Koska _load() on yksityinen ja kutsutaan konstruktorissa, meidän pitää luottaa,
-  // että se ehtii tai käyttää oletusarvoa.
-  // Tässä vaiheessa `asetukset.aanetKaytossa` voi palauttaa oletusarvon, jos lataus ei ole valmis.
-  // Turvallisempi tapa olisi tehdä AsetuksetTarjoajan alustuksesta Future ja odottaa sitä.
-
-  // Väliaikainen ratkaisu käynnistysäänen soittoon:
-  // Odotetaan pieni hetki, jotta asetukset ehtivät mahdollisesti latautua. Ei ideaali.
+  // Lyhyt viive, jotta asetukset ehtivät latautua (ei kriittinen tuotannossa)
   await Future.delayed(const Duration(milliseconds: 200));
-  if (asetukset.aanetKaytossa) {
-    await soitaKaynnistysaani();
-  }
 
+  // Äänet (TTS/ääniefektit) soitetaan pelin sisällä, ei tässä
+
+  // Sovelluksen käynnistys: alustetaan providerit ja siirrytään TriviaVisaSovellus-widgettiin
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => asetukset), // Käytetään jo luotua instanssia
-
+        // AsetuksetTarjoaja tarjoaa sovelluksen äänija ja vaikeustasoasetukset
+        ChangeNotifierProvider(create: (_) => asetukset),
+        // Puhepalvelu hoitaa TTS ja STT -toiminnot
         Provider<Puhepalvelu>(
           create: (_) => Puhepalvelu(),
           dispose: (_, palvelu) => palvelu.dispose(),
         ),
-
-        // TriviaTarjoaja.
-        // Jos TriviaTarjoaja tarvitsee AsetuksetTarjoajaa konstruktorissaan,
-        // käytä ChangeNotifierProxyProvideria.
-        // Tässä oletetaan, että TriviaTarjoaja hakee AsetuksetTarjoajan
-        // Provider.of(context)-kutsulla tarvittaessa metodeissaan.
-        ChangeNotifierProvider(
-          create: (context) => TriviaTarjoaja(),
-          // EI dispose-parametria ChangeNotifierProviderille tällä tavalla.
-          // TriviaTarjoajan oma dispose() -metodi kutsutaan automaattisesti.
-        ),
+        // TriviaTarjoaja hakee ja hallinnoi kysymyksiä ja pisteitä
+        ChangeNotifierProvider(create: (_) => TriviaTarjoaja()),
       ],
       child: const TriviaVisaSovellus(),
     ),
   );
 }
 
-Future<void> soitaKaynnistysaani() async {
-  final audioPlayer = AudioPlayer();
-  try {
-    await audioPlayer.play(AssetSource('sounds/application_start.mp3'));
-    await Future.delayed(const Duration(seconds: 2));
-  } catch (e) {
-    debugPrint("Virhe käynnistysäänen soitossa: $e");
-  } finally {
-    await audioPlayer.dispose();
-  }
-}
-
+/// Päärakenteinen widget sovellukselle
 class TriviaVisaSovellus extends StatefulWidget {
   const TriviaVisaSovellus({super.key});
 
@@ -85,34 +51,29 @@ class _TriviaVisaSovellusState extends State<TriviaVisaSovellus> {
   @override
   void initState() {
     super.initState();
+    // Käynnistetään puheentunnistus (STT) ensimmäisen kehyksen renderöinnin jälkeen
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Alustetaan Puhepalvelu
-      // Varmistetaan, että context on saatavilla ja Provider on valmis
-      if (mounted) { // Tarkistetaan, että widget on yhä puussa
+      if (mounted) {
+        // Haetaan providerista puhepalvelu-instanssi
         final puhepalvelu = Provider.of<Puhepalvelu>(context, listen: false);
+        // Alustetaan puheentunnistus ja käsitellään mahdollinen epäonnistuminen
         puhepalvelu.initSpeech().then((available) {
-          if (!available && mounted) { // Tarkista mounted uudelleen asynkronisen kutsun jälkeen
+          if (!available && mounted) {
             debugPrint('Speech-to-Text ei ole saatavilla sovelluksen käynnistyessä.');
-            // Voit näyttää käyttäjälle ilmoituksen tässä, jos haluat
           }
         });
       }
-      // TriviaTarjoajan kääntäjämallit ladataan sen konstruktorissa.
     });
   }
 
-  // dispose-metodia ei tarvita tässä luokassa enää, koska Providerit hoitavat
-  // TriviaTarjoajan ja Puhepalvelun dispose-kutsut.
-
   @override
   Widget build(BuildContext context) {
+    // MaterialApp asettaa teeman ja siirtyy aloitusnäkymään
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TriviaVisa',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const AloitusNakyma(),
+      debugShowCheckedModeBanner: false, // Poistetaan debug-lippu ruudulta
+      title: 'Tietovisa', // Sovelluksen nimi
+      theme: ThemeData(primarySwatch: Colors.blue), // Teeman värit
+      home: const AloitusNakyma(), // Ensisijainen näkymä sovelluksen käynnistyessä
     );
   }
 }
