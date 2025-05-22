@@ -1,4 +1,3 @@
-// nakymat/aloitus_nakyma.dart
 // Flutterin peruswidgetit ja tyylit
 import 'package:flutter/material.dart';
 // Provider‐kirjasto tilanhallintaan (esim. TriviaTarjoaja, AsetuksetTarjoaja)

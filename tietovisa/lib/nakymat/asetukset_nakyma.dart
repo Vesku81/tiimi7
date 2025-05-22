@@ -1,5 +1,3 @@
-// nakymat/asetukset_nakyma.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../tarjoajat/asetukset_tarjoaja.dart';
