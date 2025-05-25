@@ -95,7 +95,7 @@ class PeliNakymaTila extends State<PeliNakyma> {
 
   // Metodi taustamusiikin soittamiseen.
   Future<void> _soitaTaustamusiikki(int voimakkuus) async {
-    await _audioPlayer.setVolume(voimakkuus / 100); // Asetetaan äänenvoimakkuus (0.0 - 1.0).
+    await _audioPlayer.setVolume(voimakkuus / 80); // Asetetaan äänenvoimakkuus (0.0 - 1.0).
     await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Asetetaan musiikki looppaamaan.
     await _audioPlayer.play(AssetSource('sounds/background_music.mp3')); // Soitetaan musiikkitiedosto.
   }
